@@ -16,20 +16,25 @@ function MapView() {
 
     useEffect(() => {
         mapboxgl.accessToken = mapboxToken
-        if (mapContainerRef.current) {
-            mapRef.current = new mapboxgl.Map({
-                container: mapContainerRef.current,
-                style: "mapbox://styles/mapbox/streets-v11",
-                center: [6.88845, 51.091183],
-                zoom: 13,
-            });
-        }
 
-        return () => {
-            if (mapRef.current) {
-                mapRef.current.remove();
-            }
-        }
+        if (!mapContainerRef.current) return;
+
+        const map = new mapboxgl.Map({
+            container: mapContainerRef.current,
+            style: "mapbox://styles/mapbox/light-v11",
+            center: [6.88845, 51.091183], // Monheim am Rhein
+            zoom: 13,
+        });
+
+        mapRef.current = map;
+
+        // **🎯 Marker hinzufügen**
+        new mapboxgl.Marker({ color: "red" }) // Marker mit roter Farbe
+            .setLngLat([6.88845, 51.091183]) // Koordinaten
+            .setPopup(new mapboxgl.Popup().setText("Monheim am Rhein")) // Popup beim Klicken
+            .addTo(map);
+
+        return () => map.remove();
     }, [])
 
     return (
