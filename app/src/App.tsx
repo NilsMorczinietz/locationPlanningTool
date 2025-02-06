@@ -4,12 +4,11 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import "./App.css";
 
-const mapboxToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+// Mapbox Access Token aus der .env laden
+const mapboxToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
 if (!mapboxToken) {
   throw new Error("Mapbox Access Token fehlt. Setze ihn in der .env Datei.");
 }
-
-mapboxgl.accessToken = mapboxToken;
 
 function App() {
 
@@ -17,9 +16,13 @@ function App() {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    mapboxgl.accessToken = mapboxToken
     if (mapContainerRef.current) {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current,
+        style: "mapbox://styles/mapbox/streets-v11",
+        center: [6.88845, 51.091183],
+        zoom: 13,
       });
     }
 
