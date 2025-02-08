@@ -4,13 +4,30 @@
     width: 100%;
     height: 100%;
     align-items: center;
-    background-color: aqua;
+    background-color: rgb(255, 255, 255);
 }
 
 .location-list {
-    flex-grow: 1;  /* Nimmt den gesamten verfügbaren Platz ein */
+    flex-grow: 1;
     width: 100%;
-    overflow-y: auto; /* Falls die Liste scrollbar sein soll */
+    overflow-y: auto; /* Beibehaltung der Scrollbarkeit */
+    padding-bottom: 15px;
+
+    /* Scrollbar ausblenden für Webkit-Browser */
+    scrollbar-width: none; /* Für Firefox */
+    -ms-overflow-style: none; /* Für Internet Explorer & Edge */
+}
+
+.location-list::-webkit-scrollbar {
+    display: none; /* Für Chrome, Safari und Edge */
+}
+
+.location-list > div:nth-child(odd) {
+    background-color: white;
+}
+
+.location-list > div:nth-child(even) {
+    background-color: lightgray;
 }
 
 .create-location-button {
@@ -20,4 +37,16 @@
     width: 100%;
     padding: 25px;
     background-color: rgb(255, 255, 255);
+    position: relative; /* Notwendig für das Pseudo-Element */
+}
+
+.create-location-button::before {
+    content: "";
+    position: absolute;
+    top: -60px; /* Höhe des Fades */
+    left: 0;
+    width: 100%;
+    height: 60px; /* Höhe des Fade-Effekts */
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.847));
+    pointer-events: none; /* Klicks gehen durch */
 }
