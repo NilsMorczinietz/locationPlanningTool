@@ -87,8 +87,8 @@ export function LocationForm({ location, error, setLocation, onCancel, onSave, o
                 <div />
             </div>
             <div className="locationEntry-actions">
-                <Button variant="default" color="red" onClick={onCancel}>Abbrechen</Button>
-                <Button color="green" onClick={onSave}>Speichern</Button>
+                <Button radius="xs" variant="default" color="red" onClick={onCancel}>Abbrechen</Button>
+                <Button radius="xs" color="green" onClick={onSave}>Speichern</Button>
                 <MdDelete className="delete-icon" color="grey" size={23} onClick={onDelete} style={{ cursor: "pointer" }} />
             </div>
         </div>

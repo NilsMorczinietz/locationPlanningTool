@@ -11,7 +11,7 @@
     flex-grow: 1;
     width: 100%;
     overflow-y: auto; /* Beibehaltung der Scrollbarkeit */
-    padding-bottom: 20px;
+    padding-bottom: 30px;
 
     /* Scrollbar ausblenden für Webkit-Browser */
     scrollbar-width: none; /* Für Firefox */
