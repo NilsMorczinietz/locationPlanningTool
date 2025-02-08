@@ -36,7 +36,7 @@ function LocationView({ location, onEdit }: any) {
     );
 }
 
-function LocationForm({ location, error, setLocation, onCancel, onSave, onDelete }: any) {
+export function LocationForm({ location, error, setLocation, onCancel, onSave, onDelete }: any) {
     return (
         <div className="locationEntry-editing">
             <div className="locationEntry-info-editing">
