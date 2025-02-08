@@ -44,6 +44,43 @@ function MapView() {
             });    
         });
 
+        // Düsseldorf Marker hinzufügen (verschiebbar)
+        // const marker = new mapboxgl.Marker({ draggable: true })
+        //     .setLngLat([6.799617926519687, 51.223350738818]) // Startposition
+        //     .addTo(map);
+
+        // // Event-Listener für das Verschieben des Markers
+        // marker.on("dragend", () => {
+        //     const newLngLat = marker.getLngLat();
+        //     console.log("Neue Position:", newLngLat.lng, newLngLat.lat);
+        // });
+
+        // 1️⃣ Custom SVG als HTML-Element erstellen
+        const customMarker = document.createElement("div");
+        customMarker.innerHTML = `
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="red" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+                <circle cx="12" cy="12" r="5" fill="white"/>
+            </svg>
+        `;
+        customMarker.style.width = "40px";
+        customMarker.style.height = "40px";
+        customMarker.style.cursor = "pointer";
+
+        // 2️⃣ Marker mit dem Custom SVG setzen
+        const marker = new mapboxgl.Marker({
+            element: customMarker, // Hier das Custom SVG als Element setzen
+            draggable: true, // Marker soll verschiebbar sein
+        })
+            .setLngLat([6.799617926519687, 51.223350738818]) // Startposition
+            .addTo(map);
+
+        // 3️⃣ Event-Listener für das Verschieben des Markers
+        marker.on("dragend", () => {
+            const newLngLat = marker.getLngLat();
+            console.log("Neue Position:", newLngLat.lng, newLngLat.lat);
+        });
+
         return () => map.remove();
     }, []);
 
