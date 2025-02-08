@@ -9,14 +9,17 @@ export default function Sidebar() {
                 <LocationEntry />
                 <LocationEntry />
                 <LocationEntry />
+                {/* <LocationEntry />
                 <LocationEntry />
                 <LocationEntry />
                 <LocationEntry />
                 <LocationEntry />
                 <LocationEntry />
-                <LocationEntry />
-                <LocationEntry />
+                <LocationEntry /> */}
             </div>
+            {/* <div className='create-location-form'>
+                <LocationEntry />
+            </div> */}
             <div className='create-location-button'>
                 <Button variant="filled" color="rgb(19, 19, 19)" radius="xs">Neuen Standort hinzufügen</Button>
             </div>

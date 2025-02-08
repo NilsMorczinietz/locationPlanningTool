@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './LocationEntry.css';
 import { Checkbox } from '@mantine/core';
+import { HiDotsVertical } from "react-icons/hi";
 
 export default function LocationEntry() {
 
@@ -16,6 +17,7 @@ export default function LocationEntry() {
                     <div>
                         <Checkbox
                             defaultChecked={true}
+                            color="red"
                         />
                     </div>
                     <div> {title} </div>
@@ -30,6 +32,7 @@ export default function LocationEntry() {
                     <div></div>
                 </div>
                 <div className="locationEntry-edit">
+                    <HiDotsVertical size={20}/>
                 </div>
             </div>
         </>

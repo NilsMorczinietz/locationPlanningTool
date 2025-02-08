@@ -9,11 +9,42 @@
 .locationEntry-info {
     flex: 1;
     display: inline-grid;
-    grid-template-columns: 30px auto auto;
+    grid-template-columns: 30px auto 60px;
+    align-items: center; /* Vertikale Zentrierung */
+    gap: 13px;
+}
+
+.locationEntry-info div:nth-child(2) {
+    color: black;
+    font-size: 16px;
+    font-weight:bold;
+}
+
+.locationEntry-info div:nth-child(5) {
+    color: rgb(57, 57, 57);
+    font-size: 16px;
+}
+
+.locationEntry-info div:nth-child(6) {
+    color: rgb(57, 57, 57);
+    font-size: 16px;
+}
+
+.locationEntry-info div:nth-child(8) {
+    color: rgb(57, 57, 57);
+    font-size: 16px;
+}
+
+.locationEntry-info div:nth-child(6) {
+    display: flex;
+    justify-content: flex-end;
 }
 
 .locationEntry-edit{
     display: flex;
-    width: 20px;
-    background-color: aqua;
+    width: 30px;
+    margin-left: 20px;
+    /* background-color: rgb(202, 202, 202); */
+    justify-content: center;
+    align-items: center;
 }
