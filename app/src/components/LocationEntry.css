@@ -9,8 +9,8 @@
 .locationEntry-info {
     flex: 1;
     display: inline-grid;
-    grid-template-columns: 30px auto 60px;
-    align-items: center; /* Vertikale Zentrierung */
+    grid-template-columns: max-content auto max-content;
+    align-items: center;
     gap: 13px;
 }
 

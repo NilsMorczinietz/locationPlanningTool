@@ -32,7 +32,7 @@ export default function LocationEntry() {
                     <div></div>
                 </div>
                 <div className="locationEntry-edit">
-                    <HiDotsVertical size={20}/>
+                    <HiDotsVertical size={20} /> 
                 </div>
             </div>
         </>
