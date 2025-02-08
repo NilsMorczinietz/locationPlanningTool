@@ -5,8 +5,21 @@ import LocationEntry from './LocationEntry';
 export default function Sidebar() {
     return (
         <div className='sidebar-container'>
-            <LocationEntry />
-            <Button variant="filled" color="rgb(19, 19, 19)" radius="xs" style={{top:"20px", bottom:"20px"}}>Neuen Standort hinzufügen</Button>
+            <div className='location-list'>
+                <LocationEntry />
+                <LocationEntry />
+                <LocationEntry />
+                <LocationEntry />
+                <LocationEntry />
+                <LocationEntry />
+                <LocationEntry />
+                <LocationEntry />
+                <LocationEntry />
+                <LocationEntry />
+            </div>
+            <div className='create-location-button'>
+                <Button variant="filled" color="rgb(19, 19, 19)" radius="xs">Neuen Standort hinzufügen</Button>
+            </div>
         </div>
     )
 }

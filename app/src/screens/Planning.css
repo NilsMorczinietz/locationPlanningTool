@@ -1,23 +1,27 @@
 .app {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    max-width: 100vw;
 }
 
 .header {
     display: flex;
     flex-direction: row;
     width: 100%;
-    height: 50px;
+    height: 50px; /* Fixe Höhe */
     background-color: rgb(209, 42, 42);
+    flex-shrink: 0; /* Verhindert das Schrumpfen der Header-Höhe */
 }
 
 .content {
     display: flex;
     flex-direction: row;
     width: 100%;
-    height: 100%;
+    flex-grow: 1; /* Nimmt den verbleibenden Platz ein */
+    overflow: hidden; /* Verhindert das Überlaufen */
 }
 
 .sidebar2 {
@@ -25,11 +29,12 @@
     flex-direction: column;
     width: 20%;
     height: 100%;
-    /* background-color: rgb(120, 117, 117); */
+    overflow: auto; /* Falls Sidebar-Inhalte zu groß werden */
 }
 
 .map-view {
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: auto; /* Falls Inhalte der Map-Ansicht zu groß werden */
 }

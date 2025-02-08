@@ -1,7 +1,23 @@
-.sidebar-container{
+.sidebar-container {
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 100%;
     align-items: center;
+    background-color: aqua;
+}
+
+.location-list {
+    flex-grow: 1;  /* Nimmt den gesamten verfügbaren Platz ein */
+    width: 100%;
+    overflow-y: auto; /* Falls die Liste scrollbar sein soll */
+}
+
+.create-location-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 25px;
+    background-color: rgb(255, 255, 255);
 }
