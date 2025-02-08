@@ -1,5 +1,8 @@
 import '@mantine/core/styles.css';
 
+import store from './redux/store';
+import { Provider } from 'react-redux';
+
 import { createTheme, MantineProvider } from '@mantine/core';
 
 import Planning from './screens/Planning'
@@ -13,9 +16,11 @@ const theme = createTheme({
 function App() {
   return (
     <>
-      <MantineProvider theme={theme}>
-        <Planning />
-      </MantineProvider>
+      <Provider store={store}>
+        <MantineProvider theme={theme}>
+          <Planning />
+        </MantineProvider>
+      </Provider>
     </>
   )
 }

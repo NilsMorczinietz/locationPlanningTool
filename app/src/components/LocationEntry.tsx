@@ -8,6 +8,9 @@ import { Button } from '@mantine/core';
 import { Checkbox } from '@mantine/core';
 import { Text } from '@mantine/core';
 
+import { useDispatch } from "react-redux";
+import { updateLocation, deleteLocation } from "../redux/actions/locationsActions";
+
 import './LocationEntry.css';
 
 function LocationView({ location, onEdit }: any) {
@@ -92,14 +95,29 @@ function LocationForm({ location, error, setLocation, onCancel, onSave, onDelete
     );
 }
 
-export default function LocationEntry() {
+interface Location {
+    id: string;
+    title: string;
+    identifier: string;
+    number: string;
+    address: string;
+}
 
-    const [location, setLocation] = useState({
-        title: 'Leitstelle der Feuerwehr',
-        identifier: 'LST',
-        number: 'L',
-        address: 'Hüttenstraße 68',
-    });
+interface LocationEntryProps {
+    location: Location;
+}
+
+export default function LocationEntry({ location }: LocationEntryProps) {
+
+    const dispatch = useDispatch();
+
+
+    // const [location, setLocation] = useState({
+    //     title: 'Leitstelle der Feuerwehr',
+    //     identifier: 'LST',
+    //     number: 'L',
+    //     address: 'Hüttenstraße 68',
+    // });
 
     const [error, setError] = useState({
         title: '',
@@ -108,12 +126,7 @@ export default function LocationEntry() {
         address: '',
     });
 
-    const [editLocation, setEditLocation] = useState({
-        title: location.title,
-        identifier: location.identifier,
-        number: location.number,
-        address: location.address,
-    });
+    const [editLocation, setEditLocation] = useState({ ...location });
 
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -150,7 +163,7 @@ export default function LocationEntry() {
     function handleSave() {
         resetError();
         if (!verifyLocation()) return;
-        setLocation(editLocation);
+        dispatch(updateLocation(editLocation)); // Redux-Store aktualisieren
         setIsEditing(false);
     }
 
@@ -161,8 +174,7 @@ export default function LocationEntry() {
     }
 
     function handleDelete() {
-        resetError();
-        setIsEditing(false);
+        dispatch(deleteLocation(location.id)); // Redux-Store aktualisieren
     }
 
     return (
