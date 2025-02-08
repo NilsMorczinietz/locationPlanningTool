@@ -9,7 +9,7 @@
 .locationEntry-info {
     flex: 1;
     display: inline-grid;
-    grid-template-columns: max-content auto max-content;
+    grid-template-columns: max-content 1fr minmax(max-content, 60px);
     align-items: center;
     gap: 13px;
 }

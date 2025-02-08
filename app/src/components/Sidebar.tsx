@@ -9,13 +9,13 @@ export default function Sidebar() {
                 <LocationEntry />
                 <LocationEntry />
                 <LocationEntry />
-                {/* <LocationEntry />
                 <LocationEntry />
                 <LocationEntry />
                 <LocationEntry />
                 <LocationEntry />
                 <LocationEntry />
-                <LocationEntry /> */}
+                <LocationEntry />
+                <LocationEntry />
             </div>
             {/* <div className='create-location-form'>
                 <LocationEntry />
