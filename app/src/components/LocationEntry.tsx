@@ -1,26 +1,29 @@
 import { useState } from 'react';
-import './LocationEntry.css';
-import { Checkbox } from '@mantine/core';
+
 import { HiDotsVertical } from "react-icons/hi";
+import { MdDelete } from "react-icons/md";
+
 import { TextInput } from '@mantine/core';
 import { Button } from '@mantine/core';
-import { Input } from '@mantine/core';
-import { MdDelete } from "react-icons/md";
+import { Checkbox } from '@mantine/core';
+import { Text } from '@mantine/core';
+
+import './LocationEntry.css';
 
 function LocationView({ location, onEdit }: any) {
     return (
         <div className="locationEntry-static">
             <div className="locationEntry-info">
                 <Checkbox defaultChecked color="red" />
-                <div>{location.title}</div>
+                <Text fw={700}>{location.title}</Text>
                 <div />
 
                 <div />
-                <div> Kurzbez.: {location.identifier} </div>
-                <div> Nr.: {location.number} </div>
+                <Text c="dimmed"> Kurzbez.: {location.identifier} </Text>
+                <Text c="dimmed"> Nr.: {location.number} </Text>
 
                 <div />
-                <div> {location.address} </div>
+                <Text c="dimmed"> {location.address} </Text>
                 <div />
             </div>
             <div className="locationEntry-edit" onClick={onEdit}>
@@ -123,24 +126,30 @@ export default function LocationEntry() {
         });
     }
 
-    function handleSave() {
-        resetError();
+    function verifyLocation() {
+        let valid = true
         if (!editLocation.title) {
             setError((prev: any) => ({ ...prev, title: 'Titel darf nicht leer sein' }));
-            return;
+            valid = false;
         }
         if (!editLocation.identifier) {
             setError((prev: any) => ({ ...prev, identifier: 'Kurzbezeichnung darf nicht leer sein' }));
-            return;
+            valid = false;
         }
         if (!editLocation.number) {
             setError((prev: any) => ({ ...prev, number: 'Kennnummer darf nicht leer sein' }));
-            return;
+            valid = false;
         }
         if (!editLocation.address) {
             setError((prev: any) => ({ ...prev, address: 'Adresse darf nicht leer sein' }));
-            return;
+            valid = false;
         }
+        return valid
+    }
+
+    function handleSave() {
+        resetError();
+        if (!verifyLocation()) return;
         setLocation(editLocation);
         setIsEditing(false);
     }
@@ -157,7 +166,7 @@ export default function LocationEntry() {
     }
 
     return (
-        <div className="locationEntry-content">
+        <div className="locationEntry">
             {isEditing ? (
                 <LocationForm
                     error={error}

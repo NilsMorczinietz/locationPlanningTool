@@ -1,11 +1,13 @@
 import { Button } from '@mantine/core';
 import './Sidebar.css';
 import LocationEntry from './LocationEntry';
+import CategoryEntry from './CategoryEntry';
 
 export default function Sidebar() {
     return (
         <div className='sidebar-container'>
             <div className='location-list'>
+                <CategoryEntry />
                 <LocationEntry />
                 <LocationEntry />
                 <LocationEntry />

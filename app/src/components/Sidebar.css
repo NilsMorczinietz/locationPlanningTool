@@ -22,12 +22,12 @@
     display: none; /* Für Chrome, Safari und Edge */
 }
 
-.location-list > div:nth-child(odd) {
+.location-list > .locationEntry:nth-child(odd) {
     background-color: rgb(255, 255, 255);
 }
 
-.location-list > div:nth-child(even) {
-    background-color: rgb(240, 240, 240);
+.location-list > .locationEntry:nth-child(even) {
+    background-color: rgb(245, 245, 245);
 }
 
 .create-location-button {

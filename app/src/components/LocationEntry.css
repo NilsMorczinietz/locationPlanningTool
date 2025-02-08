@@ -1,7 +1,7 @@
-.locationEntry-content {
+.locationEntry {
     display: flex;
     width: 100%;
-    padding: 10px;
+    padding: 12px;
 }
 
 .locationEntry-static{
@@ -22,7 +22,9 @@
     display: inline-grid;
     grid-template-columns: max-content 1fr minmax(max-content, 60px);
     align-items: center;
-    gap: 13px;
+    gap: 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .locationEntry-info-editing {
