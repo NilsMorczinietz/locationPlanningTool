@@ -28,7 +28,7 @@
 .locationEntry-info-editing {
     flex: 1;
     display: inline-grid;
-    grid-template-columns: max-content 1fr minmax(max-content, 60px);
+    grid-template-columns: max-content 1fr minmax(120px, 60px);
     align-items: center;
     gap: 5px;
 }
