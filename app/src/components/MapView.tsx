@@ -10,38 +10,44 @@ if (!mapboxToken) {
 }
 
 function MapView() {
-
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        mapboxgl.accessToken = mapboxToken
+        mapboxgl.accessToken = mapboxToken;
 
         if (!mapContainerRef.current) return;
 
         const map = new mapboxgl.Map({
             container: mapContainerRef.current,
             style: "mapbox://styles/mapbox/light-v11",
-            center: [6.799617926519687, 51.223350738818], // DUS
+            center: [6.799617926519687, 51.223350738818], // Düsseldorf
             zoom: 11.8,
         });
 
         mapRef.current = map;
 
-        // **🎯 Marker hinzufügen**
-        new mapboxgl.Marker({ color: "red" }) // Marker mit roter Farbe
-            .setLngLat([6.88845, 51.091183]) // Koordinaten
-            .setPopup(new mapboxgl.Popup().setText("Monheim am Rhein")) // Popup beim Klicken
-            .addTo(map);
+        map.on("load", () => {
+            map.addSource("duesseldorf-borders", {
+                type: "geojson",
+                data: "/dus.json", // Direkt aus dem public-Ordner
+            });
+
+            map.addLayer({
+                id: "duesseldorf-borders-layer",
+                type: "line",
+                source: "duesseldorf-borders",
+                paint: {
+                    "line-color": "red",
+                    "line-width": 1.0,
+                },
+            });    
+        });
 
         return () => map.remove();
-    }, [])
+    }, []);
 
-    return (
-        <>
-            <div id="map-container" ref={mapContainerRef} />
-        </>
-    )
+    return <div id="map-container" ref={mapContainerRef} />;
 }
 
-export default MapView
+export default MapView;
