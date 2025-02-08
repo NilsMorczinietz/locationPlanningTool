@@ -26,6 +26,48 @@ export default function Sidebar() {
         address: string;
     } | null>(null);
 
+    const [error, setError] = useState({
+        title: '',
+        identifier: '',
+        number: '',
+        address: '',
+    });
+
+    function resetError() {
+        setError({
+            title: '',
+            identifier: '',
+            number: '',
+            address: '',
+        });
+    }
+
+    function verifyLocation() {
+        let valid = true
+        if (newLocation && !newLocation.title) {
+            setError((prev: any) => ({ ...prev, title: 'Titel darf nicht leer sein' }));
+            valid = false;
+        }
+        if (newLocation && !newLocation.identifier) {
+            setError((prev: any) => ({ ...prev, identifier: 'Kurzbezeichnung darf nicht leer sein' }));
+            valid = false;
+        }
+        if (newLocation && !newLocation.number) {
+            setError((prev: any) => ({ ...prev, number: 'Kennnummer darf nicht leer sein' }));
+            valid = false;
+        }
+        if (newLocation && !newLocation.address) {
+            setError((prev: any) => ({ ...prev, address: 'Adresse darf nicht leer sein' }));
+            valid = false;
+        }
+        return valid
+    }
+
+    function cancleCreateLocation() {
+        resetError();
+        setNewLocation(null);
+    }
+
     return (
         <div className="sidebar-container">
             <div className="location-list">
@@ -38,17 +80,16 @@ export default function Sidebar() {
                 {newLocation ? (
                     <LocationForm
                         location={newLocation}
-                        error={{ title: "", identifier: "", number: "", address: "" }}
+                        error={error}
                         setLocation={setNewLocation}
-                        onCancel={() => setNewLocation(null)}
+                        onCancel={() => cancleCreateLocation()}
                         onSave={() => {
-                            if (!newLocation.title || !newLocation.identifier || !newLocation.number || !newLocation.address) {
-                                return;
-                            }
+                            resetError();
+                            if(!verifyLocation()) return;
                             dispatch(addLocation({ ...newLocation, id: uuidv4() }));
                             setNewLocation(null);
                         }}
-                        onDelete={() => setNewLocation(null)}
+                        onDelete={() => cancleCreateLocation()}
                     />
                 ) : (
                     <Button variant="filled" color="rgb(19, 19, 19)" radius="xs" onClick={() => setNewLocation({
