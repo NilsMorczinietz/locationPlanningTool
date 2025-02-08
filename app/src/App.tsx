@@ -1,7 +1,8 @@
 import '@mantine/core/styles.css';
 
-import store from './redux/store';
+import { store, persistor } from './redux/store';
 import { Provider } from 'react-redux';
+import { PersistGate } from "redux-persist/integration/react";
 
 import { createTheme, MantineProvider } from '@mantine/core';
 
@@ -18,7 +19,9 @@ function App() {
     <>
       <Provider store={store}>
         <MantineProvider theme={theme}>
-          <Planning />
+          <PersistGate loading={null} persistor={persistor}>
+            <Planning />
+          </PersistGate>
         </MantineProvider>
       </Provider>
     </>

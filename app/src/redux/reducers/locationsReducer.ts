@@ -9,20 +9,12 @@ interface Location {
   address: string;
 }
 
-interface LocationsState {
+export interface LocationsState {
   locations: Location[];
 }
 
 const initialState: LocationsState = {
-  locations: [
-    {
-      id: "1",
-      title: "Leitstelle der Feuerwehr",
-      identifier: "LST",
-      number: "L",
-      address: "Hüttenstraße 68",
-    },
-  ],
+  locations: [],
 };
 
 export const locationsReducer = createReducer(initialState, (builder) => {

@@ -13,10 +13,12 @@ import CategoryEntry from "./CategoryEntry";
 
 import { LocationForm } from "./LocationEntry";
 import "./Sidebar.css";
+import { LocationsState } from "../redux/reducers/locationsReducer";
 
 export default function Sidebar() {
     const dispatch = useDispatch();
-    const locations = useSelector((state: RootState) => state.planning.locations);
+    const locations = useSelector((state: RootState) => state.planning as LocationsState).locations;
+
 
     const [newLocation, setNewLocation] = useState<{
         id: string;
