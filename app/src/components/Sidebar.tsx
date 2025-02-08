@@ -68,10 +68,35 @@ export default function Sidebar() {
         setNewLocation(null);
     }
 
+    function createNewLocation() {
+        setNewLocation({
+            id: "",
+            title: "",
+            identifier: "",
+            number: "",
+            address: "",
+        });
+    }
+
+    function handleSaveNewLocation() {
+        resetError();
+        if (!verifyLocation()) return;
+        if (newLocation) {
+            dispatch(addLocation({
+                id: uuidv4(),
+                title: newLocation.title || "",
+                identifier: newLocation.identifier || "",
+                number: newLocation.number || "",
+                address: newLocation.address || ""
+            }));
+        }
+        setNewLocation(null);
+    }
+
     return (
         <div className="sidebar-container">
             <div className="location-list">
-                <CategoryEntry />
+                <CategoryEntry title={`Feuerwachen Düsseldorf (${locations.length})`}/>
                 {locations.map((location) => (
                     <LocationEntry key={location.id} location={location} />
                 ))}
@@ -83,22 +108,11 @@ export default function Sidebar() {
                         error={error}
                         setLocation={setNewLocation}
                         onCancel={() => cancleCreateLocation()}
-                        onSave={() => {
-                            resetError();
-                            if(!verifyLocation()) return;
-                            dispatch(addLocation({ ...newLocation, id: uuidv4() }));
-                            setNewLocation(null);
-                        }}
+                        onSave={() => handleSaveNewLocation()}
                         onDelete={() => cancleCreateLocation()}
                     />
                 ) : (
-                    <Button variant="filled" color="rgb(19, 19, 19)" radius="xs" onClick={() => setNewLocation({
-                        id: "",
-                        title: "",
-                        identifier: "",
-                        number: "",
-                        address: "",
-                    })}>
+                    <Button variant="filled" color="rgb(19, 19, 19)" radius="xs" onClick={() => createNewLocation()}>
                         Neuen Standort hinzufügen
                     </Button>
                 )}
