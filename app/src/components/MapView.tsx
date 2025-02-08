@@ -22,8 +22,8 @@ function MapView() {
         const map = new mapboxgl.Map({
             container: mapContainerRef.current,
             style: "mapbox://styles/mapbox/light-v11",
-            center: [6.88845, 51.091183], // Monheim am Rhein
-            zoom: 13,
+            center: [6.799617926519687, 51.223350738818], // DUS
+            zoom: 11.8,
         });
 
         mapRef.current = map;

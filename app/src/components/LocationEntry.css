@@ -1,23 +1,19 @@
 .locationEntry-content {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
     gap: 5px;
     padding: 10px;
 }
 
-.locationEntry-title{
-    font-size: 15px;
-    font-weight: bold;
-    color: black;
+.locationEntry-info {
+    flex: 1;
+    display: inline-grid;
+    grid-template-columns: 30px auto auto;
 }
 
-.locationEntry-prefix{
-    font-size: 15px;
-    color: rgb(72, 72, 72);
-}
-
-.locationEntry-address{
-    font-size: 15px;
-    color: rgb(72, 72, 72);
+.locationEntry-edit{
+    display: flex;
+    width: 20px;
+    background-color: aqua;
 }
