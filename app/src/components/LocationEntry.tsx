@@ -111,14 +111,6 @@ export default function LocationEntry({ location }: LocationEntryProps) {
 
     const dispatch = useDispatch();
 
-
-    // const [location, setLocation] = useState({
-    //     title: 'Leitstelle der Feuerwehr',
-    //     identifier: 'LST',
-    //     number: 'L',
-    //     address: 'Hüttenstraße 68',
-    // });
-
     const [error, setError] = useState({
         title: '',
         identifier: '',
@@ -163,7 +155,7 @@ export default function LocationEntry({ location }: LocationEntryProps) {
     function handleSave() {
         resetError();
         if (!verifyLocation()) return;
-        dispatch(updateLocation(editLocation)); // Redux-Store aktualisieren
+        dispatch(updateLocation(editLocation));
         setIsEditing(false);
     }
 
@@ -174,7 +166,7 @@ export default function LocationEntry({ location }: LocationEntryProps) {
     }
 
     function handleDelete() {
-        dispatch(deleteLocation(location.id)); // Redux-Store aktualisieren
+        dispatch(deleteLocation(location.id));
     }
 
     return (
