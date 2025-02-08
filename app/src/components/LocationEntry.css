@@ -1,9 +1,20 @@
 .locationEntry-content {
     display: flex;
+    width: 100%;
+    padding: 10px;
+}
+
+.locationEntry-static{
+    display: flex;
     flex-direction: row;
     width: 100%;
-    gap: 5px;
-    padding: 10px;
+}
+
+.locationEntry-editing{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
 }
 
 .locationEntry-info {
@@ -12,6 +23,14 @@
     grid-template-columns: max-content 1fr minmax(max-content, 60px);
     align-items: center;
     gap: 13px;
+}
+
+.locationEntry-info-editing {
+    flex: 1;
+    display: inline-grid;
+    grid-template-columns: max-content 1fr minmax(max-content, 60px);
+    align-items: center;
+    /* gap: 5px; */
 }
 
 .locationEntry-info div:nth-child(2) {
@@ -44,7 +63,13 @@
     display: flex;
     width: 30px;
     margin-left: 20px;
-    /* background-color: rgb(202, 202, 202); */
     justify-content: center;
     align-items: center;
+}
+
+.locationEntry-actions{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
 }
