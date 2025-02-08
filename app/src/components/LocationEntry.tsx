@@ -17,7 +17,7 @@ function LocationView({ location, onEdit }: any) {
     return (
         <div className="locationEntry-static">
             <div className="locationEntry-info">
-                <Checkbox defaultChecked color="red" />
+                <Checkbox defaultChecked color="#ff0000" />
                 <Text fw={700}>{location.title}</Text>
                 <div />
 
