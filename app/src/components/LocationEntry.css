@@ -30,7 +30,7 @@
     display: inline-grid;
     grid-template-columns: max-content 1fr minmax(max-content, 60px);
     align-items: center;
-    /* gap: 5px; */
+    gap: 5px;
 }
 
 .locationEntry-info div:nth-child(2) {
@@ -67,9 +67,14 @@
     align-items: center;
 }
 
-.locationEntry-actions{
+.locationEntry-actions {
     display: flex;
     flex-direction: row;
     gap: 10px;
     width: 100%;
+    padding: 5px;
+    align-items: center; /* Sorgt für vertikale Ausrichtung */
+}
+.delete-icon {
+    margin-left: auto; /* Schiebt das Icon nach rechts */
 }

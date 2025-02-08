@@ -83,7 +83,7 @@ function LocationForm({ location, setLocation, onCancel, onSave, onDelete }: any
             <div className="locationEntry-actions">
                 <Button variant="default" color="red" onClick={onCancel}>Abbrechen</Button>
                 <Button color="green" onClick={onSave}>Speichern</Button>
-                <MdDelete color="black" size={20} />
+                <MdDelete className="delete-icon" color="grey" size={23} />
             </div>
         </div>
     );
