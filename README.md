@@ -23,6 +23,6 @@ Dieses Tool hilft dabei, Feuerwehrstandorte effizient zu verwalten und die Einsa
 ![IMAGE2](./images/image2.png)
 ![IMAGE3](./images/image3.png)
 
-<small> 
+<sub> 
 (Dieses Projekt wurde inspiriert durch das Standortplanungstool von [Ubilabs](https://ubilabs.com/de/insights/standortplanungstool-feuerwehr-duesseldorf). Es wurde jedoch unabhängig entwickelt und steht in keiner Verbindung zu Ubilabs oder der Feuerwehr Düsseldorf. Es handelt sich nicht um eine offizielle Anwendung der Feuerwehr Düsseldorf.)
-</small>
+</sub>
