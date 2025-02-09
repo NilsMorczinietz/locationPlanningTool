@@ -6,7 +6,7 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import { createTheme, MantineProvider } from '@mantine/core';
 
-import Planning from './screens/Planning'
+import Planning from './screens/Planning.tsx'
 
 import "./App.css"
 
