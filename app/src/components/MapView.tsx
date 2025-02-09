@@ -145,7 +145,7 @@ export default function MapView() {
         <>
             <div id="map-container" ref={mapContainerRef} />
             <ViewControls onCenter={goToLocationAndNorth} onZoomIn={zoomIn} onZoomOut={zoomOut}/>
-            <StyleControls />
+            <StyleControls map={mapRef}/>
         </>
     )
 }
