@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import mapboxgl from "mapbox-gl";
+
+import light from '/light.png';
+import streets from '/streets.png';
+import satellite from '/satellite.png';
 
 import {
     ActionIcon,
@@ -14,14 +17,15 @@ import { addBordersLayer } from '../utils/mapUtils';
 export default function StyleControls({ map }: any) {
 
     const [open, setOpen] = useState(false);
+    const [style, setStyle] = useState("mapbox://styles/mapbox/light-v10");
 
     const variantColorResolver: VariantColorsResolver = (input) => {
         const defaultResolvedColors = defaultVariantColorsResolver(input);
 
         if (input.variant === 'control') {
             return {
-                background: open ? 'rgb(209, 42, 42)' : 'rgb(8, 8, 8)',
-                hover: open ? 'rgb(201, 34, 34)' : 'rgb(0, 0, 0)',
+                background: open ? 'rgb(255, 8, 8)' : 'rgb(8, 8, 8)',
+                hover: open ? 'rgb(240, 0, 0)' : 'rgb(0, 0, 0)',
                 color: 'none',
                 border: 'none',
             };
@@ -37,6 +41,7 @@ export default function StyleControls({ map }: any) {
         map.current.once("styledata", () => {
             addBordersLayer(map.current);
         });
+        setStyle(style);
     }
 
     return (
@@ -47,21 +52,72 @@ export default function StyleControls({ map }: any) {
                     variant="control"
                     radius="xs"
                     aria-label="MapStyle"
-                    style={{ border: "2px solid rgb(231, 231, 231)", borderRadius: "3px", boxShadow: "0px 0px 10px 1px rgb(134, 134, 134)" }}
+                    style={{ border: "2px solid rgb(231, 231, 231)", borderRadius: "3px", boxShadow: "0px 0px 5px 1px rgb(134, 134, 134)" }}
                     onClick={() => setOpen(!open)}
                 >
                     <MdLayers color='white' size={25} />
                 </ActionIcon>
             </MantineProvider>
 
-            <div style={{ display: open ? "block" : "none", width: "150px", height: "200px", marginRight: "10px", backgroundColor: "rgb(255, 255, 255)", borderRadius: "1px", boxShadow: "0px 0px 10px 1px rgb(227, 227, 227)" }}>
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", padding: "10px" }}>
-                    <button onClick={() => changeStyle("mapbox://styles/mapbox/light-v10")} style={{ backgroundColor: "rgb(255, 255, 255)", border: "none", padding: "5px", margin: "5px", borderRadius: "3px", cursor: "pointer" }}>Light</button>
-                    <button onClick={() => changeStyle("mapbox://styles/mapbox/dark-v10")} style={{ backgroundColor: "rgb(255, 255, 255)", border: "none", padding: "5px", margin: "5px", borderRadius: "3px", cursor: "pointer" }}>Dark</button>
-                    <button onClick={() => changeStyle("mapbox://styles/mapbox/satellite-v9")} style={{ backgroundColor: "rgb(255, 255, 255)", border: "none", padding: "5px", margin: "5px", borderRadius: "3px", cursor: "pointer" }}>Satellite</button>
-                    <button onClick={() => changeStyle("mapbox://styles/mapbox/streets-v11")} style={{ backgroundColor: "rgb(255, 255, 255)", border: "none", padding: "5px", margin: "5px", borderRadius: "3px", cursor: "pointer" }}>Streets</button>
+            {open && (
+                <div style={{
+                    display: "flex",
+                    gap: "13px",
+                    padding: "10px",
+                    backgroundColor: "white",
+                    borderRadius: "2px",
+                    marginRight: "10px",
+                    boxShadow: "0px 0px 3px 1px rgb(134, 134, 134)"
+                }}>
+                    <img 
+                        src={light} 
+                        alt="Light Style" 
+                        onClick={() => changeStyle("mapbox://styles/mapbox/light-v10")}
+                        style={{ 
+                            width: "45px", 
+                            height: "45px", 
+                            cursor: "pointer", 
+                            borderRadius: "5px", 
+                            border: style == "mapbox://styles/mapbox/light-v10" ? "2px solid red" : "2px solid transparent",
+                            objectFit: "cover" 
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.border = "2px solid red"}
+                        onMouseOut={(e) => e.currentTarget.style.border = "2px solid transparent"}
+                    />
+
+                    <img 
+                        src={streets} 
+                        alt="Streets Style" 
+                        onClick={() => changeStyle("mapbox://styles/mapbox/streets-v11")}
+                        style={{ 
+                            width: "45px", 
+                            height: "45px", 
+                            cursor: "pointer", 
+                            borderRadius: "5px", 
+                            border: style == "mapbox://styles/mapbox/streets-v11" ? "2px solid red" : "2px solid transparent",
+                            objectFit: "cover" 
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.border = "2px solid red"}
+                        onMouseOut={(e) => e.currentTarget.style.border = "2px solid transparent"}
+                    />
+
+                    <img 
+                        src={satellite} 
+                        alt="Satellite Style" 
+                        onClick={() => changeStyle("mapbox://styles/mapbox/satellite-v9")}
+                        style={{ 
+                            width: "45px", 
+                            height: "45px", 
+                            cursor: "pointer", 
+                            borderRadius: "5px", 
+                            border: style == "mapbox://styles/mapbox/satellite-v9" ? "2px solid red" : "2px solid transparent",
+                            objectFit: "cover"
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.border = "2px solid red"}
+                        onMouseOut={(e) => e.currentTarget.style.border = "2px solid transparent"}
+                    />
                 </div>
-            </div>
+            )}
         </div>
     )
 }
