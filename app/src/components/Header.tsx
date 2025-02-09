@@ -4,6 +4,7 @@ import { Button, FileButton } from '@mantine/core';
 
 import { FiDownload } from "react-icons/fi";
 import { FiUpload } from "react-icons/fi";
+import { RiResetLeftFill } from "react-icons/ri";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -47,6 +48,7 @@ export default function Header() {
             setUploadLoading(false);
         };
         reader.readAsText(file);
+        setFile(null);
     }
 
     useEffect(() => {
@@ -54,6 +56,10 @@ export default function Header() {
             upload();
         }
     }, [file]);
+
+    function resetLocations() {
+        dispatch(setLocations([]));
+    }
 
     return (
         <header style={{ display: "flex", alignItems: "center", padding: "5px", width: "100%", gap: "10px" }}>
@@ -66,7 +72,18 @@ export default function Header() {
 
             <div style={{ display: "flex", flex: "1" }}></div>
 
+            <Button
+                variant="light"
+                color="rgb(255, 255, 255)"
+                rightSection={<RiResetLeftFill size={16} />}
+                style={{ marginRight: "0px" }}
+                onClick={resetLocations}
+            >
+                Reset
+            </Button>
+
             <FileButton
+                key={file ? file.name : "file-upload"}
                 onChange={setFile}
                 accept=".json"
             >
