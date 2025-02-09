@@ -3,6 +3,7 @@ import { addLocation, updateLocation, deleteLocation } from "../actions/location
 
 interface Location {
   id: string;
+  active: boolean;
   title: string;
   identifier: string;
   number: string;

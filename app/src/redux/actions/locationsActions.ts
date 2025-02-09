@@ -6,6 +6,7 @@ export const DELETE_LOCATION = "DELETE_LOCATION";
 
 interface Location {
   id: string;
+  active: boolean;
   title: string;
   identifier: string;
   number: string;

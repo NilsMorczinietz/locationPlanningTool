@@ -22,6 +22,7 @@ export default function Sidebar() {
 
     const [newLocation, setNewLocation] = useState<{
         id: string;
+        active: boolean;
         title: string;
         identifier: string;
         number: string;
@@ -73,6 +74,7 @@ export default function Sidebar() {
     function createNewLocation() {
         setNewLocation({
             id: "",
+            active: true,
             title: "",
             identifier: "",
             number: "",
@@ -86,6 +88,7 @@ export default function Sidebar() {
         if (newLocation) {
             dispatch(addLocation({
                 id: uuidv4(),
+                active: newLocation.active || true,
                 title: newLocation.title || "",
                 identifier: newLocation.identifier || "",
                 number: newLocation.number || "",

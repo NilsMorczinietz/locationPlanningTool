@@ -13,11 +13,15 @@ import { updateLocation, deleteLocation } from "../redux/actions/locationsAction
 
 import './LocationEntry.css';
 
-function LocationView({ location, onEdit }: any) {
+function LocationView({ location, toggleActive, onEdit }: any) {
     return (
         <div className="locationEntry-static">
             <div className="locationEntry-info">
-                <Checkbox defaultChecked color="#ff0000" />
+                <Checkbox 
+                    color="#ff0000" 
+                    checked={location.active}
+                    onChange={toggleActive}
+                />
                 <Text fw={700}>{location.title}</Text>
                 <div />
 
@@ -97,6 +101,7 @@ export function LocationForm({ location, error, setLocation, onCancel, onSave, o
 
 interface Location {
     id: string;
+    active: boolean;
     title: string;
     identifier: string;
     number: string;
@@ -169,6 +174,10 @@ export default function LocationEntry({ location }: LocationEntryProps) {
         dispatch(deleteLocation(location.id));
     }
 
+    function handleToggleActive() {
+        dispatch(updateLocation({ ...location, active: !location.active }));
+    }
+
     return (
         <div className="locationEntry">
             {isEditing ? (
@@ -181,7 +190,7 @@ export default function LocationEntry({ location }: LocationEntryProps) {
                     onDelete={() => handleDelete()}
                 />
             ) : (
-                <LocationView location={location} onEdit={() => setIsEditing(true)} />
+                <LocationView location={location} toggleActive={handleToggleActive} onEdit={() => setIsEditing(true)} />
             )}
         </div>
     )
