@@ -8,6 +8,7 @@ import { fetchCoordinates } from "../utils/geocodeUtils";
 import { addBordersLayer, initializeMap } from "../utils/mapUtils";
 import LocationMarker from "./LocationMarker";
 import "./MapView.css";
+import MapControls from "./MapControls";
 
 const mapboxToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
 if (!mapboxToken) {
@@ -113,5 +114,36 @@ export default function MapView() {
         }
     }
 
-    return <div id="map-container" ref={mapContainerRef} />;
+    function goToLocationAndNorth() {
+        const lng = 6.799617926519687;
+        const lat = 51.223350738818;
+        const zoom = 11.8;
+
+        if (!mapRef.current) return;
+    
+        mapRef.current.easeTo({
+            center: [lng, lat],
+            zoom: zoom,
+            bearing: 0, // Richtung auf Norden ausrichten
+            pitch: 0,   // Keine Neigung
+            duration: 1000, // Sanfte Animation (1 Sekunde)
+        });
+    }
+
+    function zoomIn() {
+        if (!mapRef.current) return;
+        mapRef.current.zoomIn();
+    }
+
+    function zoomOut() {
+        if (!mapRef.current) return;
+        mapRef.current.zoomOut();
+    }
+
+    return (
+        <>
+            <div id="map-container" ref={mapContainerRef} />
+            <MapControls onCenter={goToLocationAndNorth} onZoomIn={zoomIn} onZoomOut={zoomOut}/>
+        </>
+    )
 }

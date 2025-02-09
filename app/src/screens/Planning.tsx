@@ -1,7 +1,6 @@
 import Header from "../components/Header"
 import MapView from "../components/MapView"
 import Sidebar from "../components/Sidebar"
-import MapControls from "../components/MapControls"
 
 import "./Planning.css"
 
@@ -17,7 +16,6 @@ function Planning() {
                 </div>
                 <div className="map-view">
                     <MapView />
-                    <MapControls />
                 </div>
             </div>
         </div>

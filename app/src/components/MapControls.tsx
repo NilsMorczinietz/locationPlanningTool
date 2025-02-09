@@ -25,7 +25,7 @@ const variantColorResolver: VariantColorsResolver = (input) => {
     return defaultResolvedColors;
 };
 
-export default function MapControls() {
+export default function MapControls({onCenter, onZoomIn, onZoomOut}: any) {
     return (
         <div style={{ position: "absolute", bottom: "10px", right: "0", margin: "30px" }}>
             <MantineProvider theme={{ variantColorResolver }}>
@@ -36,6 +36,7 @@ export default function MapControls() {
                         size="lg"
                         aria-label="zoomIn"
                         style={{ boxShadow: "0 0 0 0.5px rgb(231, 231, 231)" }}
+                        onClick={onZoomIn}
                     >
                         <GoPlus size={28} color="white" />
                     </ActionIcon>
@@ -46,6 +47,7 @@ export default function MapControls() {
                         size="lg"
                         aria-label="zoomOut"
                         style={{ boxShadow: "0 0 0 0.5px rgb(231, 231, 231)" }}
+                        onClick={onZoomOut}
                     >
                         <HiMinusSmall size={30} color="white" />
                     </ActionIcon>
@@ -56,6 +58,7 @@ export default function MapControls() {
                         size="lg"
                         aria-label="compass"
                         style={{ boxShadow: "0 0 0 0.5px rgb(231, 231, 231)" }}
+                        onClick={onCenter}
                     >
                         <IoMdCompass size={25} color="white" />
                     </ActionIcon>
