@@ -1,4 +1,3 @@
-import React from 'react'
 import {
     ActionIcon,
     MantineProvider,
@@ -6,9 +5,10 @@ import {
     VariantColorsResolver,
 } from '@mantine/core';
 
-import { FiPlus } from "react-icons/fi";
-import { FiMinus } from "react-icons/fi";
+
 import { IoMdCompass } from "react-icons/io";
+import { GoPlus } from "react-icons/go";
+import { HiMinusSmall } from "react-icons/hi2";
 
 const variantColorResolver: VariantColorsResolver = (input) => {
     const defaultResolvedColors = defaultVariantColorsResolver(input);
@@ -29,15 +29,15 @@ export default function MapControls() {
     return (
         <div style={{ position: "absolute", bottom: "10px", right: "0", margin: "30px" }}>
             <MantineProvider theme={{ variantColorResolver }}>
-                <ActionIcon.Group orientation="vertical">
+                <ActionIcon.Group orientation="vertical" style={{ border: "2px solid rgb(231, 231, 231)", borderRadius: "5px" }}>
                     <ActionIcon
                         variant="control"
                         radius="xs"
                         size="lg"
                         aria-label="zoomIn"
-                        style={{ border: "1px solid white" }}
+                        style={{ boxShadow: "0 0 0 0.5px rgb(231, 231, 231)" }}
                     >
-                        <FiPlus size={20} color="white" />
+                        <GoPlus size={28} color="white" />
                     </ActionIcon>
 
                     <ActionIcon
@@ -45,9 +45,9 @@ export default function MapControls() {
                         radius="xs"
                         size="lg"
                         aria-label="zoomOut"
-                        style={{ border: "1px solid white" }}
+                        style={{ boxShadow: "0 0 0 0.5px rgb(231, 231, 231)" }}
                     >
-                        <FiMinus size={20} color="white" />
+                        <HiMinusSmall size={30} color="white" />
                     </ActionIcon>
 
                     <ActionIcon
@@ -55,9 +55,9 @@ export default function MapControls() {
                         radius="xs"
                         size="lg"
                         aria-label="compass"
-                        style={{ border: "1px solid white" }}
+                        style={{ boxShadow: "0 0 0 0.5px rgb(231, 231, 231)" }}
                     >
-                        <IoMdCompass size={20} color="white" />
+                        <IoMdCompass size={25} color="white" />
                     </ActionIcon>
                 </ActionIcon.Group>
             </MantineProvider>
