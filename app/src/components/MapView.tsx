@@ -8,7 +8,8 @@ import { fetchCoordinates } from "../utils/geocodeUtils";
 import { addBordersLayer, initializeMap } from "../utils/mapUtils";
 import LocationMarker from "./LocationMarker";
 import "./MapView.css";
-import MapControls from "./MapControls";
+import ViewControls from "./ViewControls";
+import StyleControls from "./StyleControls";
 
 const mapboxToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
 if (!mapboxToken) {
@@ -143,7 +144,8 @@ export default function MapView() {
     return (
         <>
             <div id="map-container" ref={mapContainerRef} />
-            <MapControls onCenter={goToLocationAndNorth} onZoomIn={zoomIn} onZoomOut={zoomOut}/>
+            <ViewControls onCenter={goToLocationAndNorth} onZoomIn={zoomIn} onZoomOut={zoomOut}/>
+            <StyleControls />
         </>
     )
 }
