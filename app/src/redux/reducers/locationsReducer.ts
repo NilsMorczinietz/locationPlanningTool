@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { addLocation, updateLocation, deleteLocation } from "../actions/locationsActions";
+import { addLocation, updateLocation, deleteLocation, setLocations } from "../actions/locationsActions";
 
 interface Location {
   id: string;
@@ -31,5 +31,8 @@ export const locationsReducer = createReducer(initialState, (builder) => {
     })
     .addCase(deleteLocation, (state, action) => {
       state.locations = state.locations.filter((loc) => loc.id !== action.payload);
+    })
+    .addCase(setLocations, (state, action) => {
+      state.locations = action.payload;
     });
 });
