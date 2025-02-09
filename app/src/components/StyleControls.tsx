@@ -52,7 +52,7 @@ export default function StyleControls({ map }: any) {
                     variant="control"
                     radius="xs"
                     aria-label="MapStyle"
-                    style={{ border: "2px solid rgb(231, 231, 231)", borderRadius: "3px", boxShadow: "0px 0px 5px 1px rgb(134, 134, 134)" }}
+                    style={{ border: "2px solid rgb(231, 231, 231)", borderRadius: "3px", boxShadow: "0px 0px 7px 0px rgb(134, 134, 134)" }}
                     onClick={() => setOpen(!open)}
                 >
                     <MdLayers color='white' size={25} />
@@ -67,7 +67,7 @@ export default function StyleControls({ map }: any) {
                     backgroundColor: "white",
                     borderRadius: "2px",
                     marginRight: "10px",
-                    boxShadow: "0px 0px 3px 1px rgb(134, 134, 134)"
+                    boxShadow: "0px 0px 10px 0px rgb(134, 134, 134)"
                 }}>
                     <img 
                         src={light} 

@@ -29,7 +29,7 @@ export default function ViewControls({onCenter, onZoomIn, onZoomOut}: any) {
     return (
         <div style={{ position: "absolute", bottom: "10px", right: "0", margin: "30px" }}>
             <MantineProvider theme={{ variantColorResolver }}>
-                <ActionIcon.Group orientation="vertical" style={{ border: "2px solid rgb(231, 231, 231)", borderRadius: "5px", boxShadow: "0px 0px 10px 1px rgb(134, 134, 134)"}}>
+                <ActionIcon.Group orientation="vertical" style={{ border: "2px solid rgb(231, 231, 231)", borderRadius: "2px", boxShadow: "0px 0px 10px 0px rgb(134, 134, 134)"}}>
                     <ActionIcon
                         variant="control"
                         radius="xs"
