@@ -1,8 +1,12 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import "./MapView.css";
+
+import { LocationsState } from "../redux/reducers/locationsReducer";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const mapboxToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
 if (!mapboxToken) {
@@ -12,6 +16,9 @@ if (!mapboxToken) {
 function MapView() {
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
+    const [markers, setMarkers] = useState<Map<string, mapboxgl.Marker>>(new Map());
+
+    const locations = useSelector((state: RootState) => state.planning as LocationsState).locations;
 
     useEffect(() => {
         mapboxgl.accessToken = mapboxToken;
@@ -41,48 +48,77 @@ function MapView() {
                     "line-color": "red",
                     "line-width": 1.0,
                 },
-            });    
-        });
-
-        // Düsseldorf Marker hinzufügen (verschiebbar)
-        // const marker = new mapboxgl.Marker({ draggable: true })
-        //     .setLngLat([6.799617926519687, 51.223350738818]) // Startposition
-        //     .addTo(map);
-
-        // // Event-Listener für das Verschieben des Markers
-        // marker.on("dragend", () => {
-        //     const newLngLat = marker.getLngLat();
-        //     console.log("Neue Position:", newLngLat.lng, newLngLat.lat);
-        // });
-
-        // 1️⃣ Custom SVG als HTML-Element erstellen
-        const customMarker = document.createElement("div");
-        customMarker.innerHTML = `
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="red" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
-                <circle cx="12" cy="12" r="5" fill="white"/>
-            </svg>
-        `;
-        customMarker.style.width = "40px";
-        customMarker.style.height = "40px";
-        customMarker.style.cursor = "pointer";
-
-        // 2️⃣ Marker mit dem Custom SVG setzen
-        const marker = new mapboxgl.Marker({
-            element: customMarker, // Hier das Custom SVG als Element setzen
-            draggable: true, // Marker soll verschiebbar sein
-        })
-            .setLngLat([6.799617926519687, 51.223350738818]) // Startposition
-            .addTo(map);
-
-        // 3️⃣ Event-Listener für das Verschieben des Markers
-        marker.on("dragend", () => {
-            const newLngLat = marker.getLngLat();
-            console.log("Neue Position:", newLngLat.lng, newLngLat.lat);
+            });
         });
 
         return () => map.remove();
     }, []);
+
+    // 📍 Marker für Locations setzen oder aktualisieren
+    useEffect(() => {
+        if (!mapRef.current) return;
+
+        async function updateMarkers() {
+            const updatedMarkers = new Map(markers);
+
+            for (const location of locations) {
+                if (!location.address) continue;
+
+                const address = location.address + ", Düsseldorf Germany";
+                const geocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxToken}`;
+
+                try {
+                    const response = await fetch(geocodeUrl);
+                    const data = await response.json();
+
+                    if (data.features.length > 0) {
+                        const [lng, lat] = data.features[0].center;
+                        console.log(`Geocode für ${address}:`, lng, lat);
+
+                        if (updatedMarkers.has(location.id)) {
+                            // Falls der Marker schon existiert, verschiebe ihn
+                            updatedMarkers.get(location.id)!.setLngLat([lng, lat]);
+                        } else {
+                            // Neuen Marker mit Custom SVG erstellen
+                            const customMarker = document.createElement("div");
+                            customMarker.innerHTML = `
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" stroke="white" stroke-width="1"/>
+                                    <circle cx="12" cy="12" r="5" fill="white"/>
+                                </svg>
+                            `;
+                            customMarker.style.width = "40px";
+                            customMarker.style.height = "40px";
+                            customMarker.style.cursor = "pointer";
+
+                            // Marker zur Karte hinzufügen
+                            const newMarker = new mapboxgl.Marker({ element: customMarker })
+                                .setLngLat([lng, lat])
+                                .addTo(mapRef.current!);
+
+                            updatedMarkers.set(location.id, newMarker);
+                        }
+                    } else {
+                        console.error(`Keine Koordinaten für ${location.address} gefunden.`);
+                    }
+                } catch (error) {
+                    console.error(`Fehler beim Abrufen der Geodaten für ${location.address}:`, error);
+                }
+            }
+
+            // Entferne Marker, die nicht mehr in `locations` existieren
+            markers.forEach((marker, id) => {
+                if (!locations.find(loc => loc.id === id)) {
+                    marker.remove();
+                    updatedMarkers.delete(id);
+                }
+            });
+
+            setMarkers(updatedMarkers);
+        }
+
+        updateMarkers();
+    }, [locations]); // 🚀 Reagiert auf Änderungen in locations
 
     return <div id="map-container" ref={mapContainerRef} />;
 }
