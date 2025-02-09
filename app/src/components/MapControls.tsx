@@ -9,16 +9,16 @@ export default function MapControls() {
     return (
         <div style={{ position: "absolute", bottom: "0", right: "0", margin: "30px", backgroundColor: "" }}>
             <ActionIcon.Group orientation="vertical">
-                <ActionIcon variant="default" size="lg" aria-label="Gallery">
-                    <FiPlus size={20} color="black"/>
+                <ActionIcon variant="filled" color="rgb(10, 10, 10)" radius="xs" size="lg" aria-label="zoomIn">
+                    <FiPlus size={20} color="white"/>
                 </ActionIcon>
 
-                <ActionIcon variant="default" size="lg" aria-label="Settings">
-                    <FiMinus size={20} color="black" />
+                <ActionIcon variant="filled" color="rgb(10, 10, 10)" radius="xs" size="lg" aria-label="zoomOut">
+                    <FiMinus size={20} color="white" />
                 </ActionIcon>
 
-                <ActionIcon variant="default" size="lg" aria-label="Likes">
-                    <IoMdCompass size={20} color="black" />
+                <ActionIcon variant="filled" color="rgb(10, 10, 10)" radius="xs" size="lg" aria-label="zoomOut">
+                    <IoMdCompass size={20} color="white" />
                 </ActionIcon>
             </ActionIcon.Group>
         </div>
