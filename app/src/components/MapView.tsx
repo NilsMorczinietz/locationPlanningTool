@@ -2,6 +2,9 @@ import { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import LocationMarker from "./LocationMarker";
+import { createRoot } from "react-dom/client"; // Für React 18+
+
 import "./MapView.css";
 
 import { LocationsState } from "../redux/reducers/locationsReducer";
@@ -81,15 +84,7 @@ function MapView() {
                         } else {
                             // Neuen Marker mit Custom SVG erstellen
                             const customMarker = document.createElement("div");
-                            customMarker.innerHTML = `
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="12" cy="12" r="10" stroke="white" stroke-width="1"/>
-                                    <circle cx="12" cy="12" r="5" fill="white"/>
-                                </svg>
-                            `;
-                            customMarker.style.width = "40px";
-                            customMarker.style.height = "40px";
-                            customMarker.style.cursor = "pointer";
+                            createRoot(customMarker).render(<LocationMarker text={location.number} />);
 
                             // Marker zur Karte hinzufügen
                             const newMarker = new mapboxgl.Marker({ element: customMarker })
