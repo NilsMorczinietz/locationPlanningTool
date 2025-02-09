@@ -90,6 +90,18 @@ export default function MapView() {
             if (!markerData) {
                 await addMarker(location);
             }
+
+            // Marker aktualisieren, wenn Location geändert wurde
+            else if (markerData.location !== location) {
+                await removeMarker(markerData);
+                await addMarker(location);
+            }
+
+            // Marker aktualisieren, wenn Kennnummer geändert wurde
+            else if (markerData.location.number !== location.number) {
+                markerData.marker.getElement().innerHTML = location.number;
+                markerData.location = location;
+            }
         }
         for (const markerData of markers) {
 
