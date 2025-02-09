@@ -5,14 +5,14 @@ export default function LocationMarker({ text = "" }: { text: string }) {
         <div
             style={{
                 position: "relative",
-                width: "40px",
-                height: "40px",
+                width: "35px",
+                height: "35px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
             }}
         >
-            <img src={MarkerIcon} alt="Location Marker" width="40" height="40" />
+            <img src={MarkerIcon} alt="Location Marker" width="35" height="35" />
 
             <span
                 style={{
@@ -20,7 +20,7 @@ export default function LocationMarker({ text = "" }: { text: string }) {
                     top: "45%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
-                    fontSize: "15px",
+                    fontSize: "14px",
                     fontWeight: "700",
                     color: "black",
                 }}
