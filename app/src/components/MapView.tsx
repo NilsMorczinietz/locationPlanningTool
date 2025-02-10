@@ -56,48 +56,48 @@ export default function MapView() {
         updateMarkers();
     }, [locations]);
 
-    async function getIsochrone(lng: number, lat: number) {
-        const profile = "driving"; // Fahrmodus
-        const minutes = 8; // 8 Minuten Fahrzeit
+    // async function getIsochrone(lng: number, lat: number) {
+    //     const profile = "driving"; // Fahrmodus
+    //     const minutes = 8; //  Minuten Fahrzeit
 
-        const url = `https://api.mapbox.com/isochrone/v1/mapbox/${profile}/${lng},${lat}?contours_minutes=${minutes}&polygons=true&access_token=${mapboxToken}`;
+    //     const url = `https://api.mapbox.com/isochrone/v1/mapbox/${profile}/${lng},${lat}?contours_minutes=${minutes}&polygons=true&access_token=${mapboxToken}`;
 
-        const response = await fetch(url);
-        if (!response.ok) return null;
-        return await response.json();
-    }
+    //     const response = await fetch(url);
+    //     if (!response.ok) return null;
+    //     return await response.json();
+    // }
 
-    async function addIsochroneLayer(lng: number, lat: number) {
-        const map = mapRef.current;
-        if (!map) return;
+    // async function addIsochroneLayer(lng: number, lat: number) {
+    //     const map = mapRef.current;
+    //     if (!map) return;
 
-        const data = await getIsochrone(lng, lat);
-        if (!data) return;
+    //     const data = await getIsochrone(lng, lat);
+    //     if (!data) return;
 
-        const sourceId = `isochrone-${lng}-${lat}`;
-        const layerId = `isochrone-layer-${lng}-${lat}`;
+    //     const sourceId = `isochrone-${lng}-${lat}`;
+    //     const layerId = `isochrone-layer-${lng}-${lat}`;
 
-        // Falls Layer/Source existieren, vorher entfernen
-        if (map.getLayer(layerId)) map.removeLayer(layerId);
-        if (map.getSource(sourceId)) map.removeSource(sourceId);
+    //     // Falls Layer/Source existieren, vorher entfernen
+    //     if (map.getLayer(layerId)) map.removeLayer(layerId);
+    //     if (map.getSource(sourceId)) map.removeSource(sourceId);
 
-        // Neue Quelle und Layer hinzufügen
-        map.addSource(sourceId, {
-            type: "geojson",
-            data: data
-        });
+    //     // Neue Quelle und Layer hinzufügen
+    //     map.addSource(sourceId, {
+    //         type: "geojson",
+    //         data: data
+    //     });
 
-        map.addLayer({
-            id: layerId,
-            type: "fill",
-            source: sourceId,
-            layout: {},
-            paint: {
-                "fill-color": "#32CD32", // Grüne Farbe
-                "fill-opacity": 0.4
-            }
-        });
-    }
+    //     map.addLayer({
+    //         id: layerId,
+    //         type: "fill",
+    //         source: sourceId,
+    //         layout: {},
+    //         paint: {
+    //             "fill-color": "#32CD32", // Grüne Farbe
+    //             "fill-opacity": 0.4
+    //         }
+    //     });
+    // }
 
     async function addMarker(location: Location) {
         if (!location.address) return;
@@ -121,7 +121,7 @@ export default function MapView() {
         markerIds.current.add(location.id);
         markerList.current.push(newMarkerData);
 
-        await addIsochroneLayer(lng, lat);
+        // await addIsochroneLayer(lng, lat);
 
         return newMarkerData;
     }
