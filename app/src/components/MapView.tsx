@@ -35,13 +35,8 @@ export default function MapView() {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const locations = useSelector((state: RootState) => state.planning.locations);
 
-    const [markers, setMarkers] = useState<MarkerData[]>([]);
-    function addMarkerData(markerData: MarkerData) {
-        setMarkers((prev) => [...prev, markerData]);
-    }
-    function removeMarkerData(locationId: string) {
-        setMarkers((prev) => prev.filter((m) => m.location.id !== locationId));
-    }
+    const markerIds = useRef(new Set<string>());
+    const markerList = useRef<MarkerData[]>([]);
 
     /* Karte initialisieren */
     useEffect(() => {
@@ -72,40 +67,45 @@ export default function MapView() {
         const customMarker = document.createElement("div");
         createRoot(customMarker).render(<LocationMarker text={location.number} />);
 
-        const newMarker = new mapboxgl.Marker({ element: customMarker })
+        const newMarker = new mapboxgl.Marker({ element: customMarker, draggable: true })
             .setLngLat([lng, lat])
             .addTo(mapRef.current!);
 
-        addMarkerData({ marker: newMarker, location: location });
+        const newMarkerData = { marker: newMarker, location: location };
+
+        if(!newMarkerData) return null;
+
+        markerIds.current.add(location.id);
+        markerList.current.push(newMarkerData);
+
+        return newMarkerData;
     }
 
     async function removeMarker(markerData: MarkerData) {
         markerData.marker.remove();
-        removeMarkerData(markerData.location.id);
+        markerIds.current.delete(markerData.location.id);
+        markerList.current = markerList.current.filter((m) => m.location.id !== markerData.location.id);
     }
 
     async function updateMarkers() {
         for (const location of locations) {
 
             // Marker hinzufügen, wenn noch nicht vorhanden
-            const markerData = markers.find((m) => m.location.id === location.id);
-            if (!markerData) {
+            if (!markerIds.current.has(location.id)) {
                 await addMarker(location);
+                continue;
             }
 
-            // Marker aktualisieren, wenn Location geändert wurde
-            else if (markerData.location !== location) {
+            const markerData = markerList.current.find((m) => m.location.id === location.id);
+            if (location == markerData?.location) continue;
+
+            // Marker aktualisieren, wenn geändert
+            if (markerData && markerData.location != location) {
                 await removeMarker(markerData);
                 await addMarker(location);
             }
-
-            // Marker aktualisieren, wenn Kennnummer geändert wurde
-            else if (markerData.location.number !== location.number) {
-                markerData.marker.getElement().innerHTML = location.number;
-                markerData.location = location;
-            }
         }
-        for (const markerData of markers) {
+        for (const markerData of markerList.current) {
 
             // Marker entfernen, wenn Location nicht mehr existiert
             const locationExists = locations.some((l) => l.id === markerData.location.id);
@@ -113,6 +113,7 @@ export default function MapView() {
                 await removeMarker(markerData);
             }
         }
+
     }
 
     function goToLocationAndNorth() {
@@ -121,7 +122,7 @@ export default function MapView() {
         const zoom = 11.8;
 
         if (!mapRef.current) return;
-    
+
         mapRef.current.easeTo({
             center: [lng, lat],
             zoom: zoom,
@@ -144,8 +145,8 @@ export default function MapView() {
     return (
         <>
             <div id="map-container" ref={mapContainerRef} />
-            <ViewControls onCenter={goToLocationAndNorth} onZoomIn={zoomIn} onZoomOut={zoomOut}/>
-            <StyleControls map={mapRef}/>
+            <ViewControls onCenter={goToLocationAndNorth} onZoomIn={zoomIn} onZoomOut={zoomOut} />
+            <StyleControls map={mapRef} />
         </>
     )
 }
