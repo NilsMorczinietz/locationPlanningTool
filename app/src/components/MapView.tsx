@@ -4,7 +4,7 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { fetchCoordinates } from "../utils/geocodeUtils";
+import { fetchCoordinates, fetchAddress} from "../utils/geocodeUtils";
 import { addBordersLayer, initializeMap } from "../utils/mapUtils";
 import LocationMarker from "./LocationMarker";
 import "./MapView.css";
@@ -113,6 +113,22 @@ export default function MapView() {
         const newMarker = new mapboxgl.Marker({ element: customMarker, draggable: true })
             .setLngLat([lng, lat])
             .addTo(mapRef.current!);
+
+        newMarker.on("dragstart", () => {
+            console.log(`Marker für ${location.title} (${location.id}) wird bewegt.`);
+        });
+
+        // newMarker.on("drag", () => {
+        //     const { lng, lat } = newMarker.getLngLat();
+        //     console.log(`Marker Position: Lng: ${lng}, Lat: ${lat}`);
+        // });
+
+        newMarker.on("dragend", async () => {
+            const { lng, lat } = newMarker.getLngLat();
+            console.log(`Marker für ${location.title} (${location.id}) wurde losgelassen bei Lng: ${lng}, Lat: ${lat}`);
+            const newAddress = await fetchAddress(lng, lat, mapboxToken);
+            console.log(`Neue Adresse: ${newAddress}`);
+        });
 
         const newMarkerData = { marker: newMarker, location: location };
 
