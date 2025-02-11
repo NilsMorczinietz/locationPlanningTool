@@ -4,13 +4,13 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { fetchCoordinates, fetchAddress} from "../utils/geocodeUtils";
+import { fetchCoordinates, fetchAddress } from "../utils/geocodeUtils";
 import { addBordersLayer, initializeMap } from "../utils/mapUtils";
 import LocationMarker from "./LocationMarker";
 import "./MapView.css";
 import ViewControls from "./ViewControls";
 import StyleControls from "./StyleControls";
-import {MarkerData, Location} from "../types";
+import { MarkerData, Location } from "../types";
 import { updateLocation } from "../redux/actions/locationsActions";
 
 const mapboxToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
@@ -115,7 +115,7 @@ export default function MapView() {
             const { lng, lat } = newMarker.getLngLat();
             const newAddress = await fetchAddress(lng, lat, mapboxToken);
 
-            const newLocation : Location = { ...location, coordinates: [lng, lat], address: newAddress };
+            const newLocation: Location = { ...location, coordinates: [lng, lat], address: newAddress };
             dispatch(updateLocation(newLocation));
         });
 
@@ -142,6 +142,8 @@ export default function MapView() {
 
             // Marker hinzufügen, wenn noch nicht vorhanden
             if (!markerIds.current.has(location.id)) {
+                if(!location.active) continue;
+
                 await addMarker(location);
                 continue;
             }
@@ -152,7 +154,7 @@ export default function MapView() {
             if (!markerData) continue;
 
             // Marker entfernen, wenn Location inaktiv
-            if (location.active === false) {
+            if (location.active == false) {
                 await removeMarker(markerData);
                 continue;
             }
