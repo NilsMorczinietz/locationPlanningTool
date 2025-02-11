@@ -11,6 +11,8 @@ import { Text } from '@mantine/core';
 import { useDispatch } from "react-redux";
 import { updateLocation, deleteLocation } from "../redux/actions/locationsActions";
 
+import {MarkerData, Location} from "../types";
+
 import './LocationEntry.css';
 
 function LocationView({ location, toggleActive, onEdit }: any) {
@@ -97,15 +99,6 @@ export function LocationForm({ location, error, setLocation, onCancel, onSave, o
             </div>
         </div>
     );
-}
-
-interface Location {
-    id: string;
-    active: boolean;
-    title: string;
-    identifier: string;
-    number: string;
-    address: string;
 }
 
 interface LocationEntryProps {

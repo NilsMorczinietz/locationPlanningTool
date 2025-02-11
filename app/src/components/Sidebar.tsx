@@ -6,14 +6,18 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useDispatch } from "react-redux";
 import { addLocation } from "../redux/actions/locationsActions";
+import { LocationsState } from "../redux/reducers/locationsReducer";
+
 import { v4 as uuidv4 } from "uuid";
 
 import LocationEntry from "./LocationEntry";
 import CategoryEntry from "./CategoryEntry";
 
 import { LocationForm } from "./LocationEntry";
+
+import { Location } from "../types";
+
 import "./Sidebar.css";
-import { LocationsState } from "../redux/reducers/locationsReducer";
 
 export default function Sidebar() {
     const dispatch = useDispatch();

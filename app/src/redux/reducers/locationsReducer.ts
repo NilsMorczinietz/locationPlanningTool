@@ -1,14 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { addLocation, updateLocation, deleteLocation, setLocations } from "../actions/locationsActions";
 
-interface Location {
-  id: string;
-  active: boolean;
-  title: string;
-  identifier: string;
-  number: string;
-  address: string;
-}
+import { Location } from "../../types";
 
 export interface LocationsState {
   locations: Location[];

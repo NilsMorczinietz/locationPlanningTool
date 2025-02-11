@@ -10,24 +10,11 @@ import LocationMarker from "./LocationMarker";
 import "./MapView.css";
 import ViewControls from "./ViewControls";
 import StyleControls from "./StyleControls";
+import {MarkerData, Location} from "../types";
 
 const mapboxToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
 if (!mapboxToken) {
     throw new Error("Mapbox Access Token fehlt. Setze ihn in der .env Datei.");
-}
-
-interface Location {
-    id: string;
-    active: boolean;
-    title: string;
-    identifier: string;
-    number: string;
-    address: string;
-}
-
-interface MarkerData {
-    marker: mapboxgl.Marker;
-    location: Location;
 }
 
 export default function MapView() {
