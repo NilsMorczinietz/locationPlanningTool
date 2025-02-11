@@ -14,6 +14,8 @@ import { updateLocation, deleteLocation } from "../redux/actions/locationsAction
 import {MarkerData, Location} from "../types";
 
 import './LocationEntry.css';
+import { fetchCoordinates } from '../utils/geocodeUtils';
+import { mapboxToken } from '../utils/mapUtils';
 
 function LocationView({ location, toggleActive, onEdit }: any) {
     return (
@@ -150,9 +152,18 @@ export default function LocationEntry({ location }: LocationEntryProps) {
         return valid
     }
 
-    function handleSave() {
+    async function handleSave() {
         resetError();
         if (!verifyLocation()) return;
+
+        const coordinates = await fetchCoordinates(editLocation.address, mapboxToken);
+        if (!coordinates) {
+            setError((prev: any) => ({ ...prev, address: 'Adresse konnte nicht gefunden werden' }));
+            return;
+        }
+
+        editLocation.coordinates = coordinates;
+
         dispatch(updateLocation(editLocation));
         setIsEditing(false);
     }
