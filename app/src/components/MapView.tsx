@@ -151,6 +151,7 @@ export default function MapView() {
 
             if (!markerData) continue;
 
+            // Marker entfernen, wenn Location inaktiv
             if (location.active === false) {
                 await removeMarker(markerData);
                 continue;
