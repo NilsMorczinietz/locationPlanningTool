@@ -18,6 +18,8 @@ import { LocationForm } from "./LocationEntry";
 import { Location } from "../types";
 
 import "./Sidebar.css";
+import { fetchCoordinates } from "../utils/geocodeUtils";
+import { mapboxToken } from "../utils/mapUtils";
 
 export default function Sidebar() {
     const dispatch = useDispatch();
@@ -51,22 +53,26 @@ export default function Sidebar() {
 
     function verifyLocation() {
         let valid = true
-        if (newLocation && !newLocation.title) {
+
+        if(!newLocation) return false;
+
+        if (!newLocation.title) {
             setError((prev: any) => ({ ...prev, title: 'Titel darf nicht leer sein' }));
             valid = false;
         }
-        if (newLocation && !newLocation.identifier) {
+        if (!newLocation.identifier) {
             setError((prev: any) => ({ ...prev, identifier: 'Kurzbezeichnung darf nicht leer sein' }));
             valid = false;
         }
-        if (newLocation && !newLocation.number) {
+        if (!newLocation.number) {
             setError((prev: any) => ({ ...prev, number: 'Kennnummer darf nicht leer sein' }));
             valid = false;
         }
-        if (newLocation && !newLocation.address) {
+        if (!newLocation.address) {
             setError((prev: any) => ({ ...prev, address: 'Adresse darf nicht leer sein' }));
             valid = false;
         }
+        
         return valid
     }
 
@@ -86,17 +92,22 @@ export default function Sidebar() {
         });
     }
 
-    function handleSaveNewLocation() {
+    async function handleSaveNewLocation() {
         resetError();
         if (!verifyLocation()) return;
+        if(!newLocation) return;
+
+        const coordinates = await fetchCoordinates(newLocation.address, mapboxToken);
+
         if (newLocation) {
             dispatch(addLocation({
                 id: uuidv4(),
-                active: newLocation.active || true,
-                title: newLocation.title || "",
-                identifier: newLocation.identifier || "",
-                number: newLocation.number || "",
-                address: newLocation.address || ""
+                active: newLocation.active,
+                title: newLocation.title,
+                identifier: newLocation.identifier,
+                number: newLocation.number,
+                address: newLocation.address,
+                coordinates: coordinates,
             }));
         }
         setNewLocation(null);

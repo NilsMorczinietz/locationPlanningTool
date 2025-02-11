@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { fetchCoordinates, fetchAddress} from "../utils/geocodeUtils";
 import { addBordersLayer, initializeMap } from "../utils/mapUtils";
@@ -11,6 +11,7 @@ import "./MapView.css";
 import ViewControls from "./ViewControls";
 import StyleControls from "./StyleControls";
 import {MarkerData, Location} from "../types";
+import { updateLocation } from "../redux/actions/locationsActions";
 
 const mapboxToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
 if (!mapboxToken) {
@@ -18,6 +19,8 @@ if (!mapboxToken) {
 }
 
 export default function MapView() {
+    const dispatch = useDispatch();
+
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const locations = useSelector((state: RootState) => state.planning.locations);
@@ -87,11 +90,9 @@ export default function MapView() {
     // }
 
     async function addMarker(location: Location) {
-        if (!location.address) return;
+        if (!location.coordinates) return;
 
-        const coordinates = await fetchCoordinates(location.address, mapboxToken);
-        if (!coordinates) return;
-        const [lng, lat] = coordinates;
+        const [lng, lat] = location.coordinates;
 
         // Neuen Marker mit Custom SVG erstellen
         const customMarker = document.createElement("div");
@@ -101,9 +102,9 @@ export default function MapView() {
             .setLngLat([lng, lat])
             .addTo(mapRef.current!);
 
-        newMarker.on("dragstart", () => {
-            console.log(`Marker für ${location.title} (${location.id}) wird bewegt.`);
-        });
+        // newMarker.on("dragstart", () => {
+        //     console.log(`Marker für ${location.title} (${location.id}) wird bewegt.`);
+        // });
 
         // newMarker.on("drag", () => {
         //     const { lng, lat } = newMarker.getLngLat();
@@ -112,9 +113,10 @@ export default function MapView() {
 
         newMarker.on("dragend", async () => {
             const { lng, lat } = newMarker.getLngLat();
-            console.log(`Marker für ${location.title} (${location.id}) wurde losgelassen bei Lng: ${lng}, Lat: ${lat}`);
             const newAddress = await fetchAddress(lng, lat, mapboxToken);
-            console.log(`Neue Adresse: ${newAddress}`);
+
+            const newLocation : Location = { ...location, coordinates: [lng, lat], address: newAddress };
+            dispatch(updateLocation(newLocation));
         });
 
         const newMarkerData = { marker: newMarker, location: location };

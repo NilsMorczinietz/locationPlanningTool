@@ -5,6 +5,7 @@ export interface Location {
     identifier: string;
     number: string;
     address: string;
+    coordinates: [number, number];
 }
 
 export interface MarkerData {

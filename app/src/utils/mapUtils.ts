@@ -1,5 +1,10 @@
 import mapboxgl from "mapbox-gl";
 
+export const mapboxToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
+if (!mapboxToken) {
+    throw new Error("Mapbox Access Token fehlt. Setze ihn in der .env Datei.");
+}
+
 export function initializeMap(container: HTMLDivElement, mapboxToken : string): mapboxgl.Map {
     mapboxgl.accessToken = mapboxToken;
     const map = new mapboxgl.Map({
