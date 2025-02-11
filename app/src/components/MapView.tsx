@@ -149,8 +149,15 @@ export default function MapView() {
             const markerData = markerList.current.find((m) => m.location.id === location.id);
             if (location == markerData?.location) continue;
 
+            if (!markerData) continue;
+
+            if (location.active === false) {
+                await removeMarker(markerData);
+                continue;
+            }
+
             // Marker aktualisieren, wenn geändert
-            if (markerData && markerData.location != location) {
+            if (markerData.location != location) {
                 await removeMarker(markerData);
                 await addMarker(location);
             }
