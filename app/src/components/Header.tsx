@@ -4,7 +4,6 @@ import { Button, FileButton, Text } from '@mantine/core';
 
 import { FiDownload } from "react-icons/fi";
 import { FiUpload } from "react-icons/fi";
-import { MdDelete } from "react-icons/md";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -58,9 +57,6 @@ export default function Header() {
         }
     }, [file]);
 
-    function resetLocations() {
-        dispatch(setLocations([]));
-    }
 
     return (
         <>
