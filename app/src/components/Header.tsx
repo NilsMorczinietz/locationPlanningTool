@@ -12,7 +12,8 @@ import { useDispatch } from "react-redux";
 import { setLocations } from "../redux/slices/mapSlice";
 
 import fw_dus_logo from '/fw_dus_logo.png';
-import AlarmTimeSelect from './alarmTimeSelect';
+import AlarmTimeSelect from './AlarmTimeSelect';
+import DeleteModal from './modals/DeleteModal';
 
 export default function Header() {
     const dispatch = useDispatch();
@@ -62,65 +63,59 @@ export default function Header() {
     }
 
     return (
-        <header style={{ display: "flex", alignItems: "center", padding: "5px", width: "100%", gap: "10px" }}>
-            <div style={{ display: "flex", height: "100%", alignItems: "center", width: "25%" }}>
-                <img
-                    src={fw_dus_logo}
-                    alt="Logo"
-                    width="auto"
-                    height="90%"
-                />
-            </div>
+        <>
+            <header style={{ display: "flex", alignItems: "center", padding: "5px", width: "100%", gap: "10px" }}>
+                <div style={{ display: "flex", height: "100%", alignItems: "center", width: "25%" }}>
+                    <img
+                        src={fw_dus_logo}
+                        alt="Logo"
+                        width="auto"
+                        height="90%"
+                    />
+                </div>
 
-            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0px"}}>
-                <Text
-                    c="white"
-                    size="md"
-                >
-                    Einsatzzeit:
-                </Text>
-                <AlarmTimeSelect />
-            </div>
-
-            <div style={{ display: "flex", flex: "1" }}></div>
-
-            <Button
-                variant="light"
-                color="rgb(255, 255, 255)"
-                rightSection={<MdDelete size={16} />}
-                style={{ marginRight: "0px" }}
-                onClick={resetLocations}
-            >
-                Löschen
-            </Button>
-
-            <FileButton
-                key={file ? file.name : "file-upload"}
-                onChange={setFile}
-                accept=".json"
-            >
-                {(props) =>
-                    <Button
-                        {...props}
-                        color="rgb(255, 255, 255)"
-                        variant="outline"
-                        rightSection={<FiUpload size={16} />}
-                        loading={uploadLoading}
+                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0px" }}>
+                    <Text
+                        c="white"
+                        size="md"
                     >
-                        Upload
-                    </Button>
-                }
-            </FileButton>
+                        Einsatzzeit:
+                    </Text>
+                    <AlarmTimeSelect />
+                </div>
 
-            <Button
-                color="rgb(255, 255, 255)"
-                variant="outline"
-                rightSection={<FiDownload size={16} />}
-                onClick={download}
-                loading={downloadLoading}
-            >
-                Download
-            </Button>
-        </header>
+                <div style={{ display: "flex", flex: "1" }}></div>
+
+                <DeleteModal/>
+
+                <FileButton
+                    key={file ? file.name : "file-upload"}
+                    onChange={setFile}
+                    accept=".json"
+                >
+                    {(props) =>
+                        <Button
+                            {...props}
+                            color="rgb(255, 255, 255)"
+                            variant="outline"
+                            rightSection={<FiUpload size={16} />}
+                            loading={uploadLoading}
+                        >
+                            Upload
+                        </Button>
+                    }
+                </FileButton>
+
+                <Button
+                    color="rgb(255, 255, 255)"
+                    variant="outline"
+                    rightSection={<FiDownload size={16} />}
+                    onClick={download}
+                    loading={downloadLoading}
+                >
+                    Download
+                </Button>
+            </header>
+        </>
     );
 }
