@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { use, useState } from 'react';
+
 import { Input, InputBase, Combobox, useCombobox, Text } from '@mantine/core';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { setTimeLimit } from '../redux/slices/settingsSlice';
+
 import classes from './alarmTimeSelect.module.css';
+import { RootState } from '../redux/store';
 
 interface Item {
     label: string;
@@ -17,11 +22,15 @@ const items: Item[] = [
 ];
 
 export default function AlarmTimeSelect() {
+    const dispatch = useDispatch();
+
+    const initAlarmTime = useSelector((state: RootState) => state.settings.timeLimit);
+    
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
     });
 
-    const [value, setValue] = useState<number | null>(8);
+    const [value, setValue] = useState<number | null>(initAlarmTime);
 
     const options = items.map((item) => (
         <Combobox.Option value={item.value.toString()} key={item.value}>
@@ -29,14 +38,19 @@ export default function AlarmTimeSelect() {
         </Combobox.Option>
     ));
 
+    function handleSelect(value: number) {
+        console.log(value);
+        setValue(value);
+        dispatch(setTimeLimit(value));
+    }
+
     return (
         <Combobox
             store={combobox}
             onOptionSubmit={(val) => {
                 const selectedItem = items.find((item) => item.value.toString() === val);
                 if (selectedItem) {
-                    console.log(selectedItem.value);
-                    setValue(selectedItem.value);
+                    handleSelect(selectedItem.value);
                 }
                 combobox.closeDropdown();
             }}
