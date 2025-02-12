@@ -142,7 +142,7 @@ export default function MapView() {
 
             // Marker hinzufügen, wenn noch nicht vorhanden
             if (!markerIds.current.has(location.id)) {
-                if(!location.active) continue;
+                if(!location.active) continue; // Marker nur hinzufügen, wenn Location aktiv
 
                 await addMarker(location);
                 continue;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Button, FileButton } from '@mantine/core';
+import { Button, ComboboxItem, FileButton, Select, Text } from '@mantine/core';
 
 import { FiDownload } from "react-icons/fi";
 import { FiUpload } from "react-icons/fi";
@@ -12,6 +12,8 @@ import { useDispatch } from "react-redux";
 import { LocationsState } from "../redux/reducers/locationsReducer";
 import { setLocations } from "../redux/actions/locationsActions";
 
+import classes from './Header.module.css';
+
 import fw_dus_logo from '/fw_dus_logo.png';
 
 export default function Header() {
@@ -21,6 +23,8 @@ export default function Header() {
     const [file, setFile] = useState<File | null>(null);
     const [uploadLoading, setUploadLoading] = useState(false);
     const [downloadLoading, setDownloadLoading] = useState(false);
+
+    const [timeLimit, setTimeLimit] = useState<ComboboxItem | null>(null);
 
     function download() {
         setDownloadLoading(true);
@@ -63,11 +67,37 @@ export default function Header() {
 
     return (
         <header style={{ display: "flex", alignItems: "center", padding: "5px", width: "100%", gap: "10px" }}>
-            <img
-                src={fw_dus_logo}
-                alt="Logo"
-                width="auto"
-                height="90%"
+            <div style={{ display: "flex", height: "100%", alignItems: "center", width: "25%"}}>
+                <img
+                    src={fw_dus_logo}
+                    alt="Logo"
+                    width="auto"
+                    height="90%"
+                />
+            </div>
+
+
+            <Text
+                c="white"
+                size="md"
+            >
+                Einsatzzeit:
+            </Text>
+            <Select
+                classNames={{ input: classes.input, section: classes.section, option: classes.option }}
+                variant="unstyled"
+                placeholder=""
+                data={[
+                    { value: '5', label: '5 Minuten' },
+                    { value: '6', label: '6 Minuten' },
+                    { value: '7', label: '7 Minuten' },
+                    { value: '8', label: '8 Minuten' },
+                    { value: '10', label: '10 Minuten' }
+                ]}
+                value={timeLimit ? timeLimit.value : '8'}
+                onChange={(_value, option) => setTimeLimit(option)}
+                color='white'
+                comboboxProps={{ shadow: 'md' }}
             />
 
             <div style={{ display: "flex", flex: "1" }}></div>
