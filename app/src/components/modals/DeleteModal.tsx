@@ -1,16 +1,22 @@
+import { useState } from 'react';
+
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Button, Text } from '@mantine/core';
 
 import { MdDelete } from "react-icons/md";
+
 import { useDispatch } from 'react-redux';
 import { setLocations } from '../../redux/slices/mapSlice';
 
 export default function DeleteModal() {
     const dispatch = useDispatch();
     const [opened, { open, close }] = useDisclosure(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     function resetLocations() {
+        setDeleteLoading(true);
         dispatch(setLocations([]));
+        setDeleteLoading(false);
     }
 
     return (
@@ -39,6 +45,7 @@ export default function DeleteModal() {
                     <Button
                         fullWidth
                         color="red"
+                        loading={deleteLoading}
                         rightSection={<MdDelete size={16} />}
                         onClick={() => {
                             resetLocations();
