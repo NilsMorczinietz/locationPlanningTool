@@ -4,7 +4,7 @@ import { Button, FileButton, Text } from '@mantine/core';
 
 import { FiDownload } from "react-icons/fi";
 import { FiUpload } from "react-icons/fi";
-import { RiResetLeftFill } from "react-icons/ri";
+import { MdDelete } from "react-icons/md";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -87,11 +87,11 @@ export default function Header() {
             <Button
                 variant="light"
                 color="rgb(255, 255, 255)"
-                rightSection={<RiResetLeftFill size={16} />}
+                rightSection={<MdDelete size={16} />}
                 style={{ marginRight: "0px" }}
                 onClick={resetLocations}
             >
-                Reset
+                Löschen
             </Button>
 
             <FileButton
