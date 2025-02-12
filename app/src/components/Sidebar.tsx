@@ -14,12 +14,10 @@ import CategoryEntry from "./CategoryEntry";
 import { LocationForm } from "./LocationEntry";
 import { addLocation } from "../redux/slices/mapSlice";
 
-import { Location } from "../types";
 
 import "./Sidebar.css";
 import { fetchCoordinates } from "../utils/geocodeUtils";
 import { mapboxToken } from "../utils/mapUtils";
-import store from "../redux/store";
 
 export default function Sidebar() {
     const dispatch = useDispatch();

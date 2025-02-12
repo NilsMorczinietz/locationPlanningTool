@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useDispatch, useSelector } from "react-redux";
-import store, { RootState } from "../redux/store";
+import { RootState } from "../redux/store";
 import { fetchAddress } from "../utils/geocodeUtils";
 import { addBordersLayer, initializeMap } from "../utils/mapUtils";
 import LocationMarker from "./LocationMarker";

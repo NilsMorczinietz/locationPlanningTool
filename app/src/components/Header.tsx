@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react';
 
-import { Button, ComboboxItem, FileButton, Select, Text } from '@mantine/core';
+import { Button, FileButton, Text } from '@mantine/core';
 
 import { FiDownload } from "react-icons/fi";
 import { FiUpload } from "react-icons/fi";
 import { RiResetLeftFill } from "react-icons/ri";
 
 import { useSelector } from "react-redux";
-import store, { RootState } from "../redux/store";
+import { RootState } from "../redux/store";
 import { useDispatch } from "react-redux";
 import { setLocations } from "../redux/slices/mapSlice";
-import { setTimeLimit } from "../redux/slices/settingsSlice";
-
-import classes from './Header.module.css';
 
 import fw_dus_logo from '/fw_dus_logo.png';
+import AlarmTimeSelect from './alarmTimeSelect';
 
 export default function Header() {
     const dispatch = useDispatch();
@@ -23,8 +21,6 @@ export default function Header() {
     const [file, setFile] = useState<File | null>(null);
     const [uploadLoading, setUploadLoading] = useState(false);
     const [downloadLoading, setDownloadLoading] = useState(false);
-
-    const [timeLimit, setTimeLimitLokal] = useState<ComboboxItem | null>(null);
 
     function download() {
         setDownloadLoading(true);
@@ -65,15 +61,9 @@ export default function Header() {
         dispatch(setLocations([]));
     }
 
-    function changeTimeLimit(limit : ComboboxItem) {
-        setTimeLimitLokal(limit);
-        console.log(parseInt(timeLimit?.value as string));
-        dispatch(setTimeLimit(parseInt(timeLimit?.value as string)));
-    }
-
     return (
         <header style={{ display: "flex", alignItems: "center", padding: "5px", width: "100%", gap: "10px" }}>
-            <div style={{ display: "flex", height: "100%", alignItems: "center", width: "25%"}}>
+            <div style={{ display: "flex", height: "100%", alignItems: "center", width: "25%" }}>
                 <img
                     src={fw_dus_logo}
                     alt="Logo"
@@ -82,29 +72,15 @@ export default function Header() {
                 />
             </div>
 
-
-            <Text
-                c="white"
-                size="md"
-            >
-                Einsatzzeit:
-            </Text>
-            <Select
-                classNames={{ input: classes.input, section: classes.section, option: classes.option }}
-                variant="unstyled"
-                placeholder=""
-                data={[
-                    { value: '5', label: '5 Minuten' },
-                    { value: '6', label: '6 Minuten' },
-                    { value: '7', label: '7 Minuten' },
-                    { value: '8', label: '8 Minuten' },
-                    { value: '10', label: '10 Minuten' }
-                ]}
-                value={timeLimit ? timeLimit.value : '8'}
-                onChange={(_value, option) => changeTimeLimit(option)}
-                color='white'
-                comboboxProps={{ shadow: 'md' }}
-            />
+            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0px"}}>
+                <Text
+                    c="white"
+                    size="md"
+                >
+                    Einsatzzeit:
+                </Text>
+                <AlarmTimeSelect />
+            </div>
 
             <div style={{ display: "flex", flex: "1" }}></div>
 

@@ -1,0 +1,17 @@
+.input {
+    color: rgb(255, 255, 255);
+    width: 120px;
+    background-color: transparent;
+    border: none;
+    fill: none;
+    text-align: start;
+}
+
+.section svg {
+    color: white;
+}
+
+.wrapper button {
+    padding: 0px;
+    padding-left: 10px;
+}
