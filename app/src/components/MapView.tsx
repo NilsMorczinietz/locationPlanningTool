@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import store, { RootState } from "../redux/store";
 import { fetchAddress } from "../utils/geocodeUtils";
 import { addBordersLayer, initializeMap } from "../utils/mapUtils";
 import LocationMarker from "./LocationMarker";
@@ -11,7 +11,7 @@ import "./MapView.css";
 import ViewControls from "./ViewControls";
 import StyleControls from "./StyleControls";
 import { MarkerData, Location } from "../types";
-import { updateLocation } from "../redux/actions/locationsActions";
+import { updateLocation } from "../redux/slices/mapSlice";
 
 const mapboxToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
 if (!mapboxToken) {
@@ -23,7 +23,7 @@ export default function MapView() {
 
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
-    const locations = useSelector((state: RootState) => state.planning.locations);
+    const locations = useSelector((state:RootState) => state.map.locations);
 
     const markerIds = useRef(new Set<string>());
     const markerList = useRef<MarkerData[]>([]);

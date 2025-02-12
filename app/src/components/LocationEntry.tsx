@@ -9,13 +9,14 @@ import { Checkbox } from '@mantine/core';
 import { Text } from '@mantine/core';
 
 import { useDispatch } from "react-redux";
-import { updateLocation, deleteLocation } from "../redux/actions/locationsActions";
+import { updateLocation, deleteLocation } from "../redux/slices/mapSlice";
 
 import {MarkerData, Location} from "../types";
 
 import './LocationEntry.css';
 import { fetchCoordinates } from '../utils/geocodeUtils';
 import { mapboxToken } from '../utils/mapUtils';
+import store from '../redux/store';
 
 function LocationView({ location, toggleActive, onEdit }: any) {
     return (

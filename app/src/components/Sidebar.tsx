@@ -5,8 +5,6 @@ import { Button } from "@mantine/core";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useDispatch } from "react-redux";
-import { addLocation } from "../redux/actions/locationsActions";
-import { LocationsState } from "../redux/reducers/locationsReducer";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -14,16 +12,18 @@ import LocationEntry from "./LocationEntry";
 import CategoryEntry from "./CategoryEntry";
 
 import { LocationForm } from "./LocationEntry";
+import { addLocation } from "../redux/slices/mapSlice";
 
 import { Location } from "../types";
 
 import "./Sidebar.css";
 import { fetchCoordinates } from "../utils/geocodeUtils";
 import { mapboxToken } from "../utils/mapUtils";
+import store from "../redux/store";
 
 export default function Sidebar() {
     const dispatch = useDispatch();
-    const locations = useSelector((state: RootState) => state.planning as LocationsState).locations;
+    const locations = useSelector((state: RootState) => state.map.locations)
 
 
     const [newLocation, setNewLocation] = useState<{

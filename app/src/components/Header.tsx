@@ -7,10 +7,10 @@ import { FiUpload } from "react-icons/fi";
 import { RiResetLeftFill } from "react-icons/ri";
 
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import store, { RootState } from "../redux/store";
 import { useDispatch } from "react-redux";
-import { LocationsState } from "../redux/reducers/locationsReducer";
-import { setLocations } from "../redux/actions/locationsActions";
+import { setLocations } from "../redux/slices/mapSlice";
+import { setTimeLimit } from "../redux/slices/settingsSlice";
 
 import classes from './Header.module.css';
 
@@ -18,13 +18,13 @@ import fw_dus_logo from '/fw_dus_logo.png';
 
 export default function Header() {
     const dispatch = useDispatch();
-    const locations = useSelector((state: RootState) => state.planning as LocationsState).locations;
+    const locations = useSelector((state: RootState) => state.map.locations);
 
     const [file, setFile] = useState<File | null>(null);
     const [uploadLoading, setUploadLoading] = useState(false);
     const [downloadLoading, setDownloadLoading] = useState(false);
 
-    const [timeLimit, setTimeLimit] = useState<ComboboxItem | null>(null);
+    const [timeLimit, setTimeLimitLokal] = useState<ComboboxItem | null>(null);
 
     function download() {
         setDownloadLoading(true);
@@ -65,6 +65,12 @@ export default function Header() {
         dispatch(setLocations([]));
     }
 
+    function changeTimeLimit(limit : ComboboxItem) {
+        setTimeLimitLokal(limit);
+        console.log(parseInt(timeLimit?.value as string));
+        dispatch(setTimeLimit(parseInt(timeLimit?.value as string)));
+    }
+
     return (
         <header style={{ display: "flex", alignItems: "center", padding: "5px", width: "100%", gap: "10px" }}>
             <div style={{ display: "flex", height: "100%", alignItems: "center", width: "25%"}}>
@@ -95,7 +101,7 @@ export default function Header() {
                     { value: '10', label: '10 Minuten' }
                 ]}
                 value={timeLimit ? timeLimit.value : '8'}
-                onChange={(_value, option) => setTimeLimit(option)}
+                onChange={(_value, option) => changeTimeLimit(option)}
                 color='white'
                 comboboxProps={{ shadow: 'md' }}
             />

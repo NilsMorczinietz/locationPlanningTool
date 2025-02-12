@@ -1,21 +1,25 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import { locationsReducer } from './reducers/locationsReducer';
 
-import type { LocationsState } from './reducers/locationsReducer';
+import locationsReducer from './slices/mapSlice';
+import settingsReducer from './slices/settingsSlice';
+import { PersistPartial } from 'redux-persist/es/persistReducer';
 
 const persistConfig = {
     key: 'root',
     storage,
 };
 
-const persistedReducer = persistReducer<LocationsState>(persistConfig, locationsReducer);
+const rootReducer = combineReducers({ 
+    map: locationsReducer, 
+    settings: settingsReducer 
+});
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-    reducer: {
-        planning: persistedReducer,
-    },
+    reducer: persistedReducer,
     devTools: true,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
@@ -24,6 +28,7 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+export default store;
 
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof persistedReducer>;
 export type AppDispatch = typeof store.dispatch;
