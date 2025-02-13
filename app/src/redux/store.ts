@@ -2,9 +2,8 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import locationsReducer from './slices/mapSlice';
+import mapReducer from './slices/mapSlice';
 import settingsReducer from './slices/settingsSlice';
-import { PersistPartial } from 'redux-persist/es/persistReducer';
 
 const persistConfig = {
     key: 'root',
@@ -12,7 +11,7 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({ 
-    map: locationsReducer, 
+    map: mapReducer, 
     settings: settingsReducer 
 });
 
