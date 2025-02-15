@@ -12,6 +12,10 @@ import ViewControls from "./ViewControls";
 import StyleControls from "./StyleControls";
 import { MarkerData, Location } from "../types";
 import { updateLocation } from "../redux/slices/mapSlice";
+import tgm from "@targomo/core";
+import { TargomoClient, TravelType } from "@targomo/core";
+
+const targomoApiKey = import.meta.env.VITE_APP_TARGOMO_API_KEY;
 
 const mapboxToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
 if (!mapboxToken) {
@@ -23,7 +27,7 @@ export default function MapView() {
 
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
-    const locations = useSelector((state:RootState) => state.map.locations);
+    const locations = useSelector((state: RootState) => state.map.locations);
 
     const markerIds = useRef(new Set<string>());
     const markerList = useRef<MarkerData[]>([]);
@@ -89,6 +93,101 @@ export default function MapView() {
     //     });
     // }
 
+    async function getTargomoIsochrone(coordinatesList: any) {
+        const client = new TargomoClient("westcentraleurope", targomoApiKey);
+        const sources = coordinatesList;
+
+        const options = {
+            travelType: 'car' as TravelType,
+            travelEdgeWeights: [60 * 8],
+            srid: 4326,
+            buffer: 0.0005,
+            serializer: "geojson" as "geojson",
+            maxEdgeWeight: 1800,
+            useClientCache: true,
+            simplify: 200,
+            strokeWidth: 1,
+            // intersectionMode: 'union' as any, 
+            roadNetworkWeightRules: { 
+                trafficLights: 10,   // Erhöhe Gewichtung, um Unterschied zu sehen
+                stopSigns: 10,       // Erhöhe Gewichtung für Stoppschilder
+                turnRestrictions: 10, // Erhöhe Gewichtung für Abbiegeregeln
+            },
+        };
+
+        console.log("Targomo API Key:", targomoApiKey);
+        console.log("Targomo Client:", client);
+        console.log("Targomo Options:", options);
+        console.log("Targomo Sources:", sources);
+
+        const result = await client.polygons.fetch(sources, options);
+        console.log(result);
+
+        return result
+    }
+
+    async function addTargomoLayer(coordinatesList:any) {
+        const map = mapRef.current;
+        if (!map || coordinatesList.length === 0) return;
+
+        const data = await getTargomoIsochrone(coordinatesList);
+        if (!data) return;
+
+        const sourceId = "targomo-isochrone-layer";
+        const layerId = "targomo-layer";
+
+        if (map.getLayer(layerId)) map.removeLayer(layerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+
+        map.addSource(sourceId, {
+            type: "geojson",
+            data: data,
+        });
+
+        map.addLayer({
+            id: layerId,
+            type: "fill",
+            source: sourceId,
+            layout: {},
+            paint: {
+                "fill-color": "#008000",  // Grün
+                "fill-opacity": 0.2,
+            },
+        });
+    }
+
+    async function highlightCoveredRoads() {
+        const map = mapRef.current;
+        if (!map) return;
+    
+        const roadLayerId = "highlighted-roads";
+        const roadSourceId = "road-source";
+    
+        // Falls der Layer bereits existiert, lösche ihn zuerst
+        if (map.getLayer(roadLayerId)) map.removeLayer(roadLayerId);
+        if (map.getSource(roadSourceId)) map.removeSource(roadSourceId);
+    
+        // Verwende Mapbox's Standard-Straßendaten (Falls sie nicht existieren, muss man ggf. eine andere Quelle wählen)
+        map.addSource(roadSourceId, {
+            type: "vector",
+            url: "mapbox://mapbox.mapbox-streets-v8" // Standard Mapbox Straßenlayer
+        });
+    
+        map.addLayer({
+            id: roadLayerId,
+            type: "line",
+            source: roadSourceId,
+            "source-layer": "road",
+            paint: {
+                "line-color": "#ffffff",  // Weiße Linien
+                "line-width": 1.0,        // Dickere Linien für bessere Sichtbarkeit
+                "line-opacity": 1         // Vollständig sichtbar
+            }
+        });
+    }
+    
+
+
     async function addMarker(location: Location) {
         if (!location.coordinates) return;
 
@@ -127,6 +226,7 @@ export default function MapView() {
         markerList.current.push(newMarkerData);
 
         // await addIsochroneLayer(lng, lat);
+        // await addTargomoLayer(lng, lat);
 
         return newMarkerData;
     }
@@ -142,7 +242,7 @@ export default function MapView() {
 
             // Marker hinzufügen, wenn noch nicht vorhanden
             if (!markerIds.current.has(location.id)) {
-                if(!location.active) continue; // Marker nur hinzufügen, wenn Location aktiv
+                if (!location.active) continue; // Marker nur hinzufügen, wenn Location aktiv
 
                 await addMarker(location);
                 continue;
@@ -172,6 +272,29 @@ export default function MapView() {
             if (!locationExists) {
                 await removeMarker(markerData);
             }
+        }
+        const coordinatesList = [];
+        for (const markerData of markerList.current) {
+
+
+            if (markerData.location.active == false) continue;
+            const [lng, lat] = markerData.location.coordinates;
+            const id = markerData.location.id;
+            const data = {
+                id: id,
+                lng: lng,
+                lat: lat,
+            }
+            coordinatesList.push(data);
+            console.log(coordinatesList);
+            await getTargomoIsochrone(coordinatesList);
+        }
+        // Falls Koordinaten vorhanden sind, rufe die Targomo-API auf
+        if (coordinatesList.length > 0) {
+            console.log("Koordinatenliste für Targomo API:", coordinatesList);
+            await addTargomoLayer(coordinatesList);
+            // await highlightCoveredRoads();
+            // addBordersLayer(mapRef.current!);
         }
 
     }

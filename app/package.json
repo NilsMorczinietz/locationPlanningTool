@@ -13,6 +13,7 @@
     "@mantine/core": "^7.16.2",
     "@mantine/hooks": "^7.16.2",
     "@reduxjs/toolkit": "^2.5.1",
+    "@targomo/core": "^0.7.18",
     "mapbox-gl": "^3.9.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
