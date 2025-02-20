@@ -11,7 +11,7 @@ import { Text } from '@mantine/core';
 import { useDispatch } from "react-redux";
 import { updateLocation, deleteLocation } from "../redux/slices/mapSlice";
 
-import {Location} from "../types";
+import { Location } from "../types";
 
 import './LocationEntry.css';
 import { fetchCoordinates } from '../utils/geocodeUtils';
@@ -21,8 +21,8 @@ function LocationView({ location, toggleActive, onEdit }: any) {
     return (
         <div className="locationEntry-static">
             <div className="locationEntry-info">
-                <Checkbox 
-                    color="#ff0000" 
+                <Checkbox
+                    color="#ff0000"
                     checked={location.active}
                     onChange={toggleActive}
                 />
@@ -40,8 +40,8 @@ function LocationView({ location, toggleActive, onEdit }: any) {
             <div className="locationEntry-edit" onClick={onEdit}>
                 <HiDotsVertical size={20} style={{ cursor: "pointer" }} />
             </div>
-            {location.edited && 
-                <div style={{display:"flex", height:"100%", width:"8px", backgroundColor:"rgb(209, 42, 42)"}}>
+            {location.edited &&
+                <div style={{ display: "flex", height: "100%", width: "8px", backgroundColor: "rgb(209, 42, 42)" }}>
 
                 </div>
             }
@@ -161,15 +161,22 @@ export default function LocationEntry({ location }: LocationEntryProps) {
         resetError();
         if (!verifyLocation()) return;
 
-        const coordinates = await fetchCoordinates(editLocation.address, mapboxToken);
-        if (!coordinates) {
-            setError((prev: any) => ({ ...prev, address: 'Adresse konnte nicht gefunden werden' }));
-            return;
+        let edited = false;
+
+        if (editLocation.address != location.address) {
+            const coordinates = await fetchCoordinates(editLocation.address, mapboxToken);
+            if (!coordinates) {
+                setError((prev: any) => ({ ...prev, address: 'Adresse konnte nicht gefunden werden' }));
+                return;
+            }
+
+            editLocation.coordinates = coordinates;
+        }
+        if (editLocation.coordinates != location.coordinates) {
+            edited = true;
         }
 
-        editLocation.coordinates = coordinates;
-
-        dispatch(updateLocation(editLocation));
+        dispatch(updateLocation({ ...editLocation, edited }));
         setIsEditing(false);
     }
 
