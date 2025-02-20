@@ -50,144 +50,6 @@ export default function MapView() {
         updateMarkers();
     }, [locations]);
 
-    // async function getIsochrone(lng: number, lat: number) {
-    //     const profile = "driving"; // Fahrmodus
-    //     const minutes = 8; //  Minuten Fahrzeit
-
-    //     const url = `https://api.mapbox.com/isochrone/v1/mapbox/${profile}/${lng},${lat}?contours_minutes=${minutes}&polygons=true&access_token=${mapboxToken}`;
-
-    //     const response = await fetch(url);
-    //     if (!response.ok) return null;
-    //     return await response.json();
-    // }
-
-    // async function addIsochroneLayer(lng: number, lat: number) {
-    //     const map = mapRef.current;
-    //     if (!map) return;
-
-    //     const data = await getIsochrone(lng, lat);
-    //     if (!data) return;
-
-    //     const sourceId = `isochrone-${lng}-${lat}`;
-    //     const layerId = `isochrone-layer-${lng}-${lat}`;
-
-    //     // Falls Layer/Source existieren, vorher entfernen
-    //     if (map.getLayer(layerId)) map.removeLayer(layerId);
-    //     if (map.getSource(sourceId)) map.removeSource(sourceId);
-
-    //     // Neue Quelle und Layer hinzufügen
-    //     map.addSource(sourceId, {
-    //         type: "geojson",
-    //         data: data
-    //     });
-
-    //     map.addLayer({
-    //         id: layerId,
-    //         type: "fill",
-    //         source: sourceId,
-    //         layout: {},
-    //         paint: {
-    //             "fill-color": "#32CD32", // Grüne Farbe
-    //             "fill-opacity": 0.4
-    //         }
-    //     });
-    // }
-
-    async function getTargomoIsochrone(coordinatesList: any) {
-        const client = new TargomoClient("westcentraleurope", targomoApiKey);
-        const sources = coordinatesList;
-
-        const options = {
-            travelType: 'car' as TravelType,
-            travelEdgeWeights: [60 * 8],
-            srid: 4326,
-            buffer: 0.0005,
-            serializer: "geojson" as "geojson",
-            maxEdgeWeight: 1800,
-            useClientCache: true,
-            simplify: 200,
-            strokeWidth: 1,
-            // intersectionMode: 'union' as any, 
-            roadNetworkWeightRules: { 
-                trafficLights: 10,   // Erhöhe Gewichtung, um Unterschied zu sehen
-                stopSigns: 10,       // Erhöhe Gewichtung für Stoppschilder
-                turnRestrictions: 10, // Erhöhe Gewichtung für Abbiegeregeln
-            },
-        };
-
-        console.log("Targomo API Key:", targomoApiKey);
-        console.log("Targomo Client:", client);
-        console.log("Targomo Options:", options);
-        console.log("Targomo Sources:", sources);
-
-        const result = await client.polygons.fetch(sources, options);
-        console.log(result);
-
-        return result
-    }
-
-    async function addTargomoLayer(coordinatesList:any) {
-        const map = mapRef.current;
-        if (!map || coordinatesList.length === 0) return;
-
-        const data = await getTargomoIsochrone(coordinatesList);
-        if (!data) return;
-
-        const sourceId = "targomo-isochrone-layer";
-        const layerId = "targomo-layer";
-
-        if (map.getLayer(layerId)) map.removeLayer(layerId);
-        if (map.getSource(sourceId)) map.removeSource(sourceId);
-
-        map.addSource(sourceId, {
-            type: "geojson",
-            data: data,
-        });
-
-        map.addLayer({
-            id: layerId,
-            type: "fill",
-            source: sourceId,
-            layout: {},
-            paint: {
-                "fill-color": "#008000",  // Grün
-                "fill-opacity": 0.2,
-            },
-        });
-    }
-
-    async function highlightCoveredRoads() {
-        const map = mapRef.current;
-        if (!map) return;
-    
-        const roadLayerId = "highlighted-roads";
-        const roadSourceId = "road-source";
-    
-        // Falls der Layer bereits existiert, lösche ihn zuerst
-        if (map.getLayer(roadLayerId)) map.removeLayer(roadLayerId);
-        if (map.getSource(roadSourceId)) map.removeSource(roadSourceId);
-    
-        // Verwende Mapbox's Standard-Straßendaten (Falls sie nicht existieren, muss man ggf. eine andere Quelle wählen)
-        map.addSource(roadSourceId, {
-            type: "vector",
-            url: "mapbox://mapbox.mapbox-streets-v8" // Standard Mapbox Straßenlayer
-        });
-    
-        map.addLayer({
-            id: roadLayerId,
-            type: "line",
-            source: roadSourceId,
-            "source-layer": "road",
-            paint: {
-                "line-color": "#ffffff",  // Weiße Linien
-                "line-width": 1.0,        // Dickere Linien für bessere Sichtbarkeit
-                "line-opacity": 1         // Vollständig sichtbar
-            }
-        });
-    }
-    
-
-
     async function addMarker(location: Location) {
         if (!location.coordinates) return;
 
@@ -201,20 +63,16 @@ export default function MapView() {
             .setLngLat([lng, lat])
             .addTo(mapRef.current!);
 
-        // newMarker.on("dragstart", () => {
-        //     console.log(`Marker für ${location.title} (${location.id}) wird bewegt.`);
-        // });
-
-        // newMarker.on("drag", () => {
-        //     const { lng, lat } = newMarker.getLngLat();
-        //     console.log(`Marker Position: Lng: ${lng}, Lat: ${lat}`);
-        // });
-
         newMarker.on("dragend", async () => {
             const { lng, lat } = newMarker.getLngLat();
             const newAddress = await fetchAddress(lng, lat, mapboxToken);
 
-            const newLocation: Location = { ...location, coordinates: [lng, lat], address: newAddress };
+            const newLocation: Location = { 
+                ...location, 
+                coordinates: [lng, lat], 
+                address: newAddress,
+                edited: true,
+            };
             dispatch(updateLocation(newLocation));
         });
 
@@ -224,9 +82,6 @@ export default function MapView() {
 
         markerIds.current.add(location.id);
         markerList.current.push(newMarkerData);
-
-        // await addIsochroneLayer(lng, lat);
-        // await addTargomoLayer(lng, lat);
 
         return newMarkerData;
     }
@@ -286,15 +141,6 @@ export default function MapView() {
                 lat: lat,
             }
             coordinatesList.push(data);
-            console.log(coordinatesList);
-            await getTargomoIsochrone(coordinatesList);
-        }
-        // Falls Koordinaten vorhanden sind, rufe die Targomo-API auf
-        if (coordinatesList.length > 0) {
-            console.log("Koordinatenliste für Targomo API:", coordinatesList);
-            await addTargomoLayer(coordinatesList);
-            // await highlightCoveredRoads();
-            // addBordersLayer(mapRef.current!);
         }
 
     }

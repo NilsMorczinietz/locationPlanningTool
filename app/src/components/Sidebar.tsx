@@ -18,20 +18,14 @@ import { addLocation } from "../redux/slices/mapSlice";
 import "./Sidebar.css";
 import { fetchCoordinates } from "../utils/geocodeUtils";
 import { mapboxToken } from "../utils/mapUtils";
+import { Location } from "../types";
 
 export default function Sidebar() {
     const dispatch = useDispatch();
     const locations = useSelector((state: RootState) => state.map.locations)
 
 
-    const [newLocation, setNewLocation] = useState<{
-        id: string;
-        active: boolean;
-        title: string;
-        identifier: string;
-        number: string;
-        address: string;
-    } | null>(null);
+    const [newLocation, setNewLocation] = useState<Location | null>(null);
 
     const [error, setError] = useState({
         title: '',
@@ -87,6 +81,8 @@ export default function Sidebar() {
             identifier: "",
             number: "",
             address: "",
+            coordinates: [0, 0],
+            edited: false,
         });
     }
 
@@ -106,6 +102,7 @@ export default function Sidebar() {
                 number: newLocation.number,
                 address: newLocation.address,
                 coordinates: coordinates,
+                edited: false,
             }));
         }
         setNewLocation(null);
