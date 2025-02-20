@@ -35,11 +35,14 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
 
     useEffect(() => {
         console.log("Isochrone refresh");
+
+        addTargomoLayer();
+
         dispatch(toggleIsochronesValid(true));
         locations.forEach((location) => {
-            dispatch(updateLocation({ 
+            dispatch(updateLocation({
                 ...location,
-                modifiedFields: { ...location.modifiedFields, coordinates: false}
+                modifiedFields: { ...location.modifiedFields, coordinates: false }
             }));
         });
     }, [isochroneRefresh]);
@@ -149,21 +152,6 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
                 await removeMarker(markerData);
             }
         }
-        const coordinatesList = [];
-        for (const markerData of markerList.current) {
-
-
-            if (markerData.location.active == false) continue;
-            const [lng, lat] = markerData.location.coordinates;
-            const id = markerData.location.id;
-            const data = {
-                id: id,
-                lng: lng,
-                lat: lat,
-            }
-            coordinatesList.push(data);
-        }
-
     }
 
     function goToLocationAndNorth() {
@@ -190,6 +178,94 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
     function zoomOut() {
         if (!mapRef.current) return;
         mapRef.current.zoomOut();
+    }
+
+    async function getTargomoIsochrone(coordinatesList: any) {
+        const client = new TargomoClient("westcentraleurope", targomoApiKey);
+        const sources = coordinatesList;
+
+        const options = {
+            travelType: 'car' as TravelType,
+            travelEdgeWeights: [60 * 8],
+            srid: 4326,
+            buffer: 0.0005,
+            serializer: "geojson" as "geojson",
+            maxEdgeWeight: 1800,
+            useClientCache: true,
+            simplify: 200,
+            strokeWidth: 1,
+            // intersectionMode: 'union' as any, 
+            roadNetworkWeightRules: {
+                trafficLights: 10,   // Erhöhe Gewichtung, um Unterschied zu sehen
+                stopSigns: 10,       // Erhöhe Gewichtung für Stoppschilder
+                turnRestrictions: 10, // Erhöhe Gewichtung für Abbiegeregeln
+            },
+        };
+
+        console.log("Targomo API Key:", targomoApiKey);
+        console.log("Targomo Client:", client);
+        console.log("Targomo Options:", options);
+        console.log("Targomo Sources:", sources);
+
+        const result = await client.polygons.fetch(sources, options);
+        console.log(result);
+
+        return result
+    }
+
+    async function addTargomoLayer() {
+        const coordinatesList = [];
+        for (const markerData of markerList.current) {
+
+
+            if (markerData.location.active == false) continue;
+            const [lng, lat] = markerData.location.coordinates;
+            const id = markerData.location.id;
+            const data = {
+                id: id,
+                lng: lng,
+                lat: lat,
+                "tm": {
+                    "car": {
+                        rushHour: false,
+                        trafficSignalPenalty: 0,
+                        trafficLeftTurnPenalty: 0,
+                        trafficRightTurnPenalty: 0,
+                    }
+                }
+            }
+            coordinatesList.push(data);
+            console.log(coordinatesList);
+            await getTargomoIsochrone(coordinatesList);
+        }
+
+        const map = mapRef.current;
+        if (!map || coordinatesList.length === 0) return;
+
+        const data = await getTargomoIsochrone(coordinatesList);
+        if (!data) return;
+
+        const sourceId = "targomo-isochrone-layer";
+        const layerId = "targomo-layer";
+
+        if (map.getLayer(layerId)) map.removeLayer(layerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+
+        map.addSource(sourceId, {
+            type: "geojson",
+            data: data,
+        });
+
+        map.addLayer({
+            id: layerId,
+            type: "fill",
+            source: sourceId,
+            layout: {},
+            paint: {
+                "fill-color": "#008000",  // Grün
+                "fill-opacity": 0.2,
+            },
+        });
     }
 
     return (
