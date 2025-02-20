@@ -188,19 +188,20 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
             travelType: 'car' as TravelType,
             travelEdgeWeights: [60 * 8],
             srid: 4326,
-            buffer: 0.0005,
+            buffer: 0.0003, // 400 Meter
             serializer: "geojson" as "geojson",
-            maxEdgeWeight: 1800,
+            // maxEdgeWeight: 1800,
             useClientCache: true,
-            simplify: 200,
-            strokeWidth: 1,
-            // intersectionMode: 'union' as any, 
+            simplify: 2,
+            intersectionMode: 'union' as any, 
             roadNetworkWeightRules: {
-                trafficLights: 10,   // Erhöhe Gewichtung, um Unterschied zu sehen
-                stopSigns: 10,       // Erhöhe Gewichtung für Stoppschilder
-                turnRestrictions: 10, // Erhöhe Gewichtung für Abbiegeregeln
+                trafficLights: 0,   // Erhöhe Gewichtung, um Unterschied zu sehen
+                stopSigns: 0,       // Erhöhe Gewichtung für Stoppschilder
+                turnRestrictions: 0, // Erhöhe Gewichtung für Abbiegeregeln
             },
         };
+
+        console.log("options", options);
 
         console.log("Targomo API Key:", targomoApiKey);
         console.log("Targomo Client:", client);
@@ -266,6 +267,7 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
                 "fill-opacity": 0.2,
             },
         });
+
     }
 
     return (
