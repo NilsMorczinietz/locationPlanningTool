@@ -36,6 +36,10 @@ export const mapSlice = createSlice({
             console.log(payload)
             state.locations = payload
         },
+        toggleIsochronesValid: (state, action) => {
+            const { payload } = action;
+            state.isochronesValid = payload;
+        },
     },
 })
 
@@ -45,6 +49,7 @@ export const {
     addLocation,
     updateLocation,
     deleteLocation,
+    toggleIsochronesValid
 } = mapSlice.actions
 
 export default mapSlice.reducer

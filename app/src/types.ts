@@ -8,7 +8,6 @@ export interface Location {
     coordinates: [number, number];
     modifiedFields: {
         coordinates: boolean;
-        identifier: boolean;
     }
 }
 

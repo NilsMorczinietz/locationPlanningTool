@@ -9,7 +9,7 @@ import { Checkbox } from '@mantine/core';
 import { Text } from '@mantine/core';
 
 import { useDispatch } from "react-redux";
-import { updateLocation, deleteLocation } from "../redux/slices/mapSlice";
+import { updateLocation, deleteLocation, toggleIsochronesValid } from "../redux/slices/mapSlice";
 
 import { Location } from "../types";
 
@@ -171,6 +171,7 @@ export default function LocationEntry({ location }: LocationEntryProps) {
         }
         if (editLocation.coordinates != location.coordinates) {
             editLocation.modifiedFields.coordinates = true;
+            dispatch(toggleIsochronesValid(false));
         }
         // if (editLocation.identifier != location.identifier) {
         //     editLocation.modifiedFields.identifier = true;

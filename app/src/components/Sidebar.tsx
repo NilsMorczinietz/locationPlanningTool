@@ -12,7 +12,7 @@ import LocationEntry from "./LocationEntry";
 import CategoryEntry from "./CategoryEntry";
 
 import { LocationForm } from "./LocationEntry";
-import { addLocation } from "../redux/slices/mapSlice";
+import { addLocation, toggleIsochronesValid} from "../redux/slices/mapSlice";
 
 
 import "./Sidebar.css";
@@ -84,7 +84,6 @@ export default function Sidebar() {
             coordinates: [0, 0],
             modifiedFields: {
                 coordinates: false,
-                identifier: false,
             },
         });
     }
@@ -107,9 +106,9 @@ export default function Sidebar() {
                 coordinates: coordinates,
                 modifiedFields: {
                     coordinates: true,
-                    identifier: false,
                 },
             }));
+            dispatch(toggleIsochronesValid(false));
         }
         setNewLocation(null);
     }
