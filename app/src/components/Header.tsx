@@ -61,7 +61,7 @@ export default function Header() {
     return (
         <>
             <header style={{ display: "flex", alignItems: "center", padding: "5px", width: "100%", gap: "10px" }}>
-                <div style={{ display: "flex", height: "100%", alignItems: "center", width: "25%" }}>
+                <div style={{ display: "flex", height: "100%", alignItems: "center", marginRight: "30px" }}>
                     <img
                         src={fw_dus_logo}
                         alt="Logo"

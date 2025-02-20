@@ -82,7 +82,10 @@ export default function Sidebar() {
             number: "",
             address: "",
             coordinates: [0, 0],
-            edited: false,
+            modifiedFields: {
+                coordinates: false,
+                identifier: false,
+            },
         });
     }
 
@@ -102,7 +105,10 @@ export default function Sidebar() {
                 number: newLocation.number,
                 address: newLocation.address,
                 coordinates: coordinates,
-                edited: false,
+                modifiedFields: {
+                    coordinates: true,
+                    identifier: false,
+                },
             }));
         }
         setNewLocation(null);

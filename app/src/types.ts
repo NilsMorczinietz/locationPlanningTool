@@ -6,7 +6,10 @@ export interface Location {
     number: string;
     address: string;
     coordinates: [number, number];
-    edited: boolean;
+    modifiedFields: {
+        coordinates: boolean;
+        identifier: boolean;
+    }
 }
 
 export interface MarkerData {

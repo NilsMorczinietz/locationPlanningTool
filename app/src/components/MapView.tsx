@@ -71,7 +71,10 @@ export default function MapView() {
                 ...location, 
                 coordinates: [lng, lat], 
                 address: newAddress,
-                edited: true,
+                modifiedFields: {
+                    ...location.modifiedFields,
+                    coordinates: true,
+                },
             };
             dispatch(updateLocation(newLocation));
         });

@@ -40,9 +40,8 @@ function LocationView({ location, toggleActive, onEdit }: any) {
             <div className="locationEntry-edit" onClick={onEdit}>
                 <HiDotsVertical size={20} style={{ cursor: "pointer" }} />
             </div>
-            {location.edited &&
-                <div style={{ display: "flex", height: "100%", width: "8px", backgroundColor: "rgb(209, 42, 42)" }}>
-
+            {location.modifiedFields.coordinates &&
+                <div style={{ display: "flex", height: "100%", width: "8px", backgroundColor: "rgb(255, 0, 0)" }}>
                 </div>
             }
         </div>
