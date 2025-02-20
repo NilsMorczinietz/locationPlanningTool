@@ -191,6 +191,7 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
             buffer: 0.0003, // 400 Meter
             serializer: "geojson" as "geojson",
             // maxEdgeWeight: 1800,
+            // minPolygonHoleSize: 30000000,
             useClientCache: true,
             simplify: 2,
             intersectionMode: 'union' as any, 
