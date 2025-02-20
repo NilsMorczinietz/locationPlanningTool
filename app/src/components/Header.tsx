@@ -15,7 +15,7 @@ import fw_dus_logo from '/fw_dus_logo.png';
 import AlarmTimeSelect from './AlarmTimeSelect';
 import DeleteModal from './modals/DeleteModal';
 
-export default function Header() {
+export default function Header({ onIsochroneRefresh }: { onIsochroneRefresh: () => void }) {
     const dispatch = useDispatch();
     const locations = useSelector((state: RootState) => state.map.locations);
 
@@ -87,8 +87,8 @@ export default function Header() {
                     color="rgb(15, 15, 15)"
                     variant="filled"
                     rightSection={<FiRefreshCw size={16} />}
-                    onClick={download}
-                    loading={downloadLoading}
+                    onClick={onIsochroneRefresh}
+                    // loading={downloadLoading}
                 >
                     Aktualisieren
                 </Button>

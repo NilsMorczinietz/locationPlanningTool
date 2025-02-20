@@ -22,7 +22,7 @@ if (!mapboxToken) {
     throw new Error("Mapbox Access Token fehlt. Setze ihn in der .env Datei.");
 }
 
-export default function MapView() {
+export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolean }) {
     const dispatch = useDispatch();
 
     const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -32,6 +32,10 @@ export default function MapView() {
 
     const markerIds = useRef(new Set<string>());
     const markerList = useRef<MarkerData[]>([]);
+
+    useEffect(() => {
+        console.log("Isochrone refresh");
+    });
 
     /* Karte initialisieren */
     useEffect(() => {
