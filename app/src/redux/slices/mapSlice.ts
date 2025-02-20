@@ -3,10 +3,12 @@ import { Location } from '../../types'
 
 interface InitialState {
     locations: Location[];
+    isochronesValid: boolean;
 }
 
 const initialState: InitialState = {
     locations: [],
+    isochronesValid: false,
 }
 
 export const mapSlice = createSlice({

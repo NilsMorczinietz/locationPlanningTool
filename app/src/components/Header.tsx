@@ -4,6 +4,7 @@ import { Button, FileButton, Text } from '@mantine/core';
 
 import { FiDownload } from "react-icons/fi";
 import { FiUpload } from "react-icons/fi";
+import { FiRefreshCw } from "react-icons/fi";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -81,6 +82,16 @@ export default function Header() {
                 </div>
 
                 <div style={{ display: "flex", flex: "1" }}></div>
+
+                <Button
+                    color="rgb(15, 15, 15)"
+                    variant="filled"
+                    rightSection={<FiRefreshCw size={16} />}
+                    onClick={download}
+                    loading={downloadLoading}
+                >
+                    Aktualisieren
+                </Button>
 
                 <DeleteModal/>
 

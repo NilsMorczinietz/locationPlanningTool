@@ -17,18 +17,44 @@ export function initializeMap(container: HTMLDivElement, mapboxToken : string): 
 }
 
 export function addBordersLayer(map: mapboxgl.Map) {
-    map.addSource("duesseldorf-borders", {
-        type: "geojson",
-        data: "/dus.json", // Direkt aus dem public-Ordner
+    addSource(map, "duesseldorf-borders", "/dus.json");
+    addLayer(map, "duesseldorf-borders-layer", "duesseldorf-borders", "line", {
+        "line-color": "red",
+        "line-width": 1.0,
     });
+}
 
-    map.addLayer({
-        id: "duesseldorf-borders-layer",
-        type: "line",
-        source: "duesseldorf-borders",
-        paint: {
-            "line-color": "red",
-            "line-width": 1.0,
-        },
-    });
+export function addSource(map: mapboxgl.Map, sourceId: string, data: any) {
+    if (!map.getSource(sourceId)) {
+        map.addSource(sourceId, { type: "geojson", data });
+    }
+}
+
+export function removeSource(map: mapboxgl.Map, sourceId: string) {
+    if (map.getSource(sourceId)) {
+        map.removeSource(sourceId);
+    }
+}
+
+export function addLayer(map: mapboxgl.Map, layerId: string, sourceId: string, type: "line" | "fill" | "circle", paint: any) {
+    if (!map.getLayer(layerId)) {
+        map.addLayer({
+            id: layerId,
+            type,
+            source: sourceId,
+            paint,
+        });
+    }
+}
+
+export function removeLayer(map: mapboxgl.Map, layerId: string) {
+    if (map.getLayer(layerId)) {
+        map.removeLayer(layerId);
+    }
+}
+
+export function toggleLayerVisibility(map: mapboxgl.Map, layerId: string, visible: boolean) {
+    if (map.getLayer(layerId)) {
+        map.setLayoutProperty(layerId, "visibility", visible ? "visible" : "none");
+    }
 }

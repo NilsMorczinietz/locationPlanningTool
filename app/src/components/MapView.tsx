@@ -5,7 +5,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { fetchAddress } from "../utils/geocodeUtils";
-import { addBordersLayer, initializeMap } from "../utils/mapUtils";
+import { addBordersLayer, initializeMap, toggleLayerVisibility } from "../utils/mapUtils";
 import LocationMarker from "./LocationMarker";
 import "./MapView.css";
 import ViewControls from "./ViewControls";
@@ -28,6 +28,7 @@ export default function MapView() {
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const locations = useSelector((state: RootState) => state.map.locations);
+    const settings = useSelector((state: RootState) => state.settings);
 
     const markerIds = useRef(new Set<string>());
     const markerList = useRef<MarkerData[]>([]);
@@ -43,6 +44,12 @@ export default function MapView() {
 
         return () => map.remove();
     }, []);
+
+    useEffect(() => {
+        const showDistricts = settings.showDistricts;
+        const showIsochrones = settings.showIsochrones;
+        toggleLayerVisibility(mapRef.current!, "duesseldorf-borders-layer", showDistricts);
+    }, [settings]);
 
     /* Marker aktualisieren */
     useEffect(() => {
