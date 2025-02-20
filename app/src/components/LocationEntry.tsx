@@ -160,8 +160,6 @@ export default function LocationEntry({ location }: LocationEntryProps) {
         resetError();
         if (!verifyLocation()) return;
 
-        let edited = false;
-
         if (editLocation.address != location.address) {
             const coordinates = await fetchCoordinates(editLocation.address, mapboxToken);
             if (!coordinates) {
@@ -172,10 +170,14 @@ export default function LocationEntry({ location }: LocationEntryProps) {
             editLocation.coordinates = coordinates;
         }
         if (editLocation.coordinates != location.coordinates) {
-            edited = true;
+            editLocation.modifiedFields.coordinates = true;
         }
+        // if (editLocation.identifier != location.identifier) {
+        //     editLocation.modifiedFields.identifier = true;
+        // }
 
-        dispatch(updateLocation({ ...editLocation, edited }));
+        dispatch(updateLocation({ ...editLocation }));
+
         setIsEditing(false);
     }
 
