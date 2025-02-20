@@ -11,7 +11,7 @@ import "./MapView.css";
 import ViewControls from "./ViewControls";
 import StyleControls from "./StyleControls";
 import { MarkerData, Location } from "../types";
-import { updateLocation } from "../redux/slices/mapSlice";
+import { toggleIsochronesValid, updateLocation } from "../redux/slices/mapSlice";
 import tgm from "@targomo/core";
 import { TargomoClient, TravelType } from "@targomo/core";
 
@@ -35,7 +35,14 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
 
     useEffect(() => {
         console.log("Isochrone refresh");
-    });
+        dispatch(toggleIsochronesValid(true));
+        locations.forEach((location) => {
+            dispatch(updateLocation({ 
+                ...location,
+                modifiedFields: { ...location.modifiedFields, coordinates: false}
+            }));
+        });
+    }, [isochroneRefresh]);
 
     /* Karte initialisieren */
     useEffect(() => {
@@ -78,9 +85,9 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
             const { lng, lat } = newMarker.getLngLat();
             const newAddress = await fetchAddress(lng, lat, mapboxToken);
 
-            const newLocation: Location = { 
-                ...location, 
-                coordinates: [lng, lat], 
+            const newLocation: Location = {
+                ...location,
+                coordinates: [lng, lat],
                 address: newAddress,
                 modifiedFields: {
                     ...location.modifiedFields,
