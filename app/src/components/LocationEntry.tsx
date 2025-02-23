@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { HiDotsVertical } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
@@ -11,36 +11,36 @@ import { Text } from '@mantine/core';
 import { useDispatch } from "react-redux";
 import { updateLocation, deleteLocation, toggleIsochronesValid } from "../redux/slices/mapSlice";
 
-import { Location } from "../types";
+import { LocationRecord } from "../types";
 
 import './LocationEntry.css';
 import { fetchCoordinates } from '../utils/geocodeUtils';
 import { mapboxToken } from '../utils/mapUtils';
 
-function LocationView({ location, toggleActive, onEdit }: any) {
+function LocationView({ locationRecord, toggleActive, onEdit }: { locationRecord: LocationRecord, toggleActive: any, onEdit: any }) {
     return (
         <div className="locationEntry-static">
             <div className="locationEntry-info">
                 <Checkbox
                     color="#ff0000"
-                    checked={location.active}
+                    checked={locationRecord.location.active}
                     onChange={toggleActive}
                 />
-                <Text fw={700}>{location.title}</Text>
+                <Text fw={700}>{locationRecord.location.title}</Text>
                 <div />
 
                 <div />
-                <Text c="dimmed"> Kurzbez.: {location.identifier} </Text>
-                <Text c="dimmed"> Nr.: {location.number} </Text>
+                <Text c="dimmed"> Kurzbez.: {locationRecord.location.identifier} </Text>
+                <Text c="dimmed"> Nr.: {locationRecord.location.number} </Text>
 
                 <div />
-                <Text c="dimmed"> {location.address} </Text>
+                <Text c="dimmed"> {locationRecord.location.address} </Text>
                 <div />
             </div>
             <div className="locationEntry-edit" onClick={onEdit}>
                 <HiDotsVertical size={20} style={{ cursor: "pointer" }} />
             </div>
-            {location.modifiedFields.coordinates &&
+            {locationRecord.metaData.needsIsochroneRecalculation &&
                 <div style={{ display: "flex", height: "100%", width: "8px", backgroundColor: "rgb(255, 0, 0)" }}>
                 </div>
             }
@@ -48,7 +48,7 @@ function LocationView({ location, toggleActive, onEdit }: any) {
     );
 }
 
-export function LocationForm({ location, error, setLocation, onCancel, onSave, onDelete }: any) {
+export function LocationForm({ locationRecord, error, setLocation, onCancel, onSave, onDelete }: { locationRecord: LocationRecord, error: any, setLocation: any, onCancel: any, onSave: any, onDelete: any }) {
     return (
         <div className="locationEntry-editing">
             <div className="locationEntry-info-editing">
@@ -60,8 +60,8 @@ export function LocationForm({ location, error, setLocation, onCancel, onSave, o
                     radius="xs"
                     variant="default"
                     placeholder="Titel"
-                    value={location.title}
-                    onChange={(e) => setLocation((prev: any) => ({ ...prev, title: e.target.value }))}
+                    value={locationRecord.location.title}
+                    onChange={(e) => setLocation((prev: any) => ({ ...prev, location: { ...prev.location, title: e.target.value } }))}
                 />
                 <div />
 
@@ -72,8 +72,8 @@ export function LocationForm({ location, error, setLocation, onCancel, onSave, o
                     radius="xs"
                     variant="default"
                     placeholder="Kurzbezeichnung"
-                    value={location.identifier}
-                    onChange={(e) => setLocation((prev: any) => ({ ...prev, identifier: e.target.value }))}
+                    value={locationRecord.location.identifier}
+                    onChange={(e) => setLocation((prev: any) => ({ ...prev, location: { ...prev.location, identifier: e.target.value } }))}
                 />
                 <TextInput
                     label="Kennnummer"
@@ -81,8 +81,8 @@ export function LocationForm({ location, error, setLocation, onCancel, onSave, o
                     radius="xs"
                     variant="default"
                     placeholder="Kennnummer"
-                    value={location.number}
-                    onChange={(e) => setLocation((prev: any) => ({ ...prev, number: e.target.value }))}
+                    value={locationRecord.location.number}
+                    onChange={(e) => setLocation((prev: any) => ({ ...prev, location: { ...prev.location, number: e.target.value } }))}
                 />
 
 
@@ -93,8 +93,8 @@ export function LocationForm({ location, error, setLocation, onCancel, onSave, o
                     radius="xs"
                     variant="default"
                     placeholder="Adresse"
-                    value={location.address}
-                    onChange={(e) => setLocation((prev: any) => ({ ...prev, address: e.target.value }))}
+                    value={locationRecord.location.address}
+                    onChange={(e) => setLocation((prev: any) => ({ ...prev, location: { ...prev.location, address: e.target.value } }))}
                 />
                 <div />
             </div>
@@ -107,12 +107,7 @@ export function LocationForm({ location, error, setLocation, onCancel, onSave, o
     );
 }
 
-interface LocationEntryProps {
-    location: Location;
-}
-
-export default function LocationEntry({ location }: LocationEntryProps) {
-
+export default function LocationEntry({ locationRecord }: { locationRecord: LocationRecord }) {
     const dispatch = useDispatch();
 
     const [error, setError] = useState({
@@ -122,7 +117,11 @@ export default function LocationEntry({ location }: LocationEntryProps) {
         address: '',
     });
 
-    const [editLocation, setEditLocation] = useState({ ...location });
+    const [editLocation, setEditLocation] = useState<LocationRecord>(locationRecord);
+    useEffect(() => {
+        setEditLocation(locationRecord);
+    }, [locationRecord]);
+    
 
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -137,19 +136,19 @@ export default function LocationEntry({ location }: LocationEntryProps) {
 
     function verifyLocation() {
         let valid = true
-        if (!editLocation.title) {
+        if (!editLocation.location.title) {
             setError((prev: any) => ({ ...prev, title: 'Titel darf nicht leer sein' }));
             valid = false;
         }
-        if (!editLocation.identifier) {
+        if (!editLocation.location.identifier) {
             setError((prev: any) => ({ ...prev, identifier: 'Kurzbezeichnung darf nicht leer sein' }));
             valid = false;
         }
-        if (!editLocation.number) {
+        if (!editLocation.location.number) {
             setError((prev: any) => ({ ...prev, number: 'Kennnummer darf nicht leer sein' }));
             valid = false;
         }
-        if (!editLocation.address) {
+        if (!editLocation.location.address) {
             setError((prev: any) => ({ ...prev, address: 'Adresse darf nicht leer sein' }));
             valid = false;
         }
@@ -160,17 +159,17 @@ export default function LocationEntry({ location }: LocationEntryProps) {
         resetError();
         if (!verifyLocation()) return;
 
-        if (editLocation.address != location.address) {
-            const coordinates = await fetchCoordinates(editLocation.address, mapboxToken);
+        if (editLocation.location.address != locationRecord.location.address) {
+            const coordinates = await fetchCoordinates(editLocation.location.address, mapboxToken);
             if (!coordinates) {
                 setError((prev: any) => ({ ...prev, address: 'Adresse konnte nicht gefunden werden' }));
                 return;
             }
 
-            editLocation.coordinates = coordinates;
+            editLocation.location.coordinates = coordinates;
         }
-        if (editLocation.coordinates != location.coordinates) {
-            editLocation.modifiedFields.coordinates = true;
+        if (editLocation.location.coordinates != locationRecord.location.coordinates) {
+            editLocation.metaData.needsIsochroneRecalculation = true;
             dispatch(toggleIsochronesValid(false));
         }
         // if (editLocation.identifier != location.identifier) {
@@ -184,16 +183,22 @@ export default function LocationEntry({ location }: LocationEntryProps) {
 
     function handleCancel() {
         resetError();
-        setEditLocation(location);
+        setEditLocation(locationRecord);
         setIsEditing(false);
     }
 
     function handleDelete() {
-        dispatch(deleteLocation(location.id));
+        dispatch(deleteLocation(locationRecord.location.id));
     }
 
     function handleToggleActive() {
-        dispatch(updateLocation({ ...location, active: !location.active }));
+        dispatch(updateLocation({ 
+            ...locationRecord, 
+            location: { 
+                ...locationRecord.location, 
+                active: !locationRecord.location.active 
+            } 
+        }));
     }
 
     return (
@@ -201,14 +206,14 @@ export default function LocationEntry({ location }: LocationEntryProps) {
             {isEditing ? (
                 <LocationForm
                     error={error}
-                    location={editLocation}
+                    locationRecord={editLocation}
                     setLocation={setEditLocation}
                     onCancel={() => handleCancel()}
                     onSave={() => handleSave()}
                     onDelete={() => handleDelete()}
                 />
             ) : (
-                <LocationView location={location} toggleActive={handleToggleActive} onEdit={() => setIsEditing(true)} />
+                <LocationView locationRecord={locationRecord} toggleActive={handleToggleActive} onEdit={() => setIsEditing(true)} />
             )}
         </div>
     )

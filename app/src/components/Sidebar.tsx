@@ -12,121 +12,114 @@ import LocationEntry from "./LocationEntry";
 import CategoryEntry from "./CategoryEntry";
 
 import { LocationForm } from "./LocationEntry";
-import { addLocation, toggleIsochronesValid} from "../redux/slices/mapSlice";
+import { addLocation, toggleIsochronesValid } from "../redux/slices/mapSlice";
 
 
 import "./Sidebar.css";
 import { fetchCoordinates } from "../utils/geocodeUtils";
 import { mapboxToken } from "../utils/mapUtils";
-import { Location } from "../types";
+import { LocationRecord } from "../types";
 
 export default function Sidebar() {
     const dispatch = useDispatch();
     const locations = useSelector((state: RootState) => state.map.locations)
 
-
-    const [newLocation, setNewLocation] = useState<Location | null>(null);
-
-    const [error, setError] = useState({
-        title: '',
-        identifier: '',
-        number: '',
-        address: '',
-    });
-
-    function resetError() {
-        setError({
-            title: '',
-            identifier: '',
-            number: '',
-            address: '',
-        });
-    }
-
-    function verifyLocation() {
-        let valid = true
-
-        if(!newLocation) return false;
-
-        if (!newLocation.title) {
-            setError((prev: any) => ({ ...prev, title: 'Titel darf nicht leer sein' }));
-            valid = false;
-        }
-        if (!newLocation.identifier) {
-            setError((prev: any) => ({ ...prev, identifier: 'Kurzbezeichnung darf nicht leer sein' }));
-            valid = false;
-        }
-        if (!newLocation.number) {
-            setError((prev: any) => ({ ...prev, number: 'Kennnummer darf nicht leer sein' }));
-            valid = false;
-        }
-        if (!newLocation.address) {
-            setError((prev: any) => ({ ...prev, address: 'Adresse darf nicht leer sein' }));
-            valid = false;
-        }
-        
-        return valid
-    }
-
-    function cancleCreateLocation() {
-        resetError();
-        setNewLocation(null);
-    }
-
-    function createNewLocation() {
-        setNewLocation({
-            id: "",
+    const initialLocationState: LocationRecord = {
+        location: {
+            id: uuidv4(),
             active: true,
             title: "",
             identifier: "",
             number: "",
             address: "",
             coordinates: [0, 0],
-            modifiedFields: {
-                coordinates: false,
-            },
-        });
+        },
+        metaData: {
+            needsIsochroneRecalculation: true,
+        },
+    };
+    const initialErrorState = {
+        title: '',
+        identifier: '',
+        number: '',
+        address: '',
+    };
+
+
+    const [newLocationRecord, setNewLocationRecord] = useState<LocationRecord | null>(null);
+    const [error, setError] = useState(initialErrorState);
+
+    function resetError() {
+        setError(initialErrorState);
+    }
+    function resetLocation() {
+        setNewLocationRecord(null);
+    }
+
+
+    function verifyLocation() {
+        let valid = true
+
+        if (!newLocationRecord) return false;
+
+        if (!newLocationRecord.location.title) {
+            setError((prev: any) => ({ ...prev, title: 'Titel darf nicht leer sein' }));
+            valid = false;
+        }
+        if (!newLocationRecord.location.identifier) {
+            setError((prev: any) => ({ ...prev, identifier: 'Kurzbezeichnung darf nicht leer sein' }));
+            valid = false;
+        }
+        if (!newLocationRecord.location.number) {
+            setError((prev: any) => ({ ...prev, number: 'Kennnummer darf nicht leer sein' }));
+            valid = false;
+        }
+        if (!newLocationRecord.location.address) {
+            setError((prev: any) => ({ ...prev, address: 'Adresse darf nicht leer sein' }));
+            valid = false;
+        }
+
+        return valid
+    }
+
+    function cancleCreateLocation() {
+        resetError();
+        resetLocation();
+    }
+
+    function createNewLocation() {
+        setNewLocationRecord(initialLocationState);
     }
 
     async function handleSaveNewLocation() {
         resetError();
-        if (!verifyLocation()) return;
-        if(!newLocation) return;
 
-        const coordinates = await fetchCoordinates(newLocation.address, mapboxToken);
+        if (!newLocationRecord || !verifyLocation()) return;
 
-        if (newLocation) {
-            dispatch(addLocation({
-                id: uuidv4(),
-                active: newLocation.active,
-                title: newLocation.title,
-                identifier: newLocation.identifier,
-                number: newLocation.number,
-                address: newLocation.address,
-                coordinates: coordinates,
-                modifiedFields: {
-                    coordinates: true,
-                },
-            }));
+        const coordinates = await fetchCoordinates(newLocationRecord.location.address, mapboxToken);
+        newLocationRecord.location.coordinates = coordinates;
+
+        if (newLocationRecord) {
+            dispatch(addLocation({ ...newLocationRecord }));
             dispatch(toggleIsochronesValid(false));
         }
-        setNewLocation(null);
+        resetLocation();
     }
 
     return (
         <div className="sidebar-container">
             <div className="location-list">
-                <CategoryEntry title={`Feuerwachen Düsseldorf (${locations.length})`}/>
-                {locations.map((location) => (
-                    <LocationEntry key={location.id} location={location} />
+                <CategoryEntry title={`Feuerwachen Düsseldorf (${locations.length})`} />
+                {locations.map((locationRecord) => (
+                    <LocationEntry key={locationRecord.location.id} locationRecord={locationRecord} />
                 ))}
             </div>
             <div className="create-location-button">
-                {newLocation ? (
+                {newLocationRecord ? (
                     <LocationForm
-                        location={newLocation}
+                        locationRecord={newLocationRecord}
                         error={error}
-                        setLocation={setNewLocation}
+                        setLocation={setNewLocationRecord}
                         onCancel={() => cancleCreateLocation()}
                         onSave={() => handleSaveNewLocation()}
                         onDelete={() => cancleCreateLocation()}

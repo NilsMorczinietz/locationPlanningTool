@@ -10,7 +10,7 @@ import LocationMarker from "./LocationMarker";
 import "./MapView.css";
 import ViewControls from "./ViewControls";
 import StyleControls from "./StyleControls";
-import { MarkerData, Location } from "../types";
+import { MarkerData, Location, LocationRecord } from "../types";
 import { toggleIsochronesValid, updateLocation } from "../redux/slices/mapSlice";
 import tgm from "@targomo/core";
 import { TargomoClient, TravelType } from "@targomo/core";
@@ -27,25 +27,25 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
 
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
-    const locations = useSelector((state: RootState) => state.map.locations);
+    const locations: LocationRecord[] = useSelector((state: RootState) => state.map.locations);
     const settings = useSelector((state: RootState) => state.settings);
 
     const markerIds = useRef(new Set<string>());
     const markerList = useRef<MarkerData[]>([]);
 
-    useEffect(() => {
-        console.log("Isochrone refresh");
+    // useEffect(() => {
+    //     console.log("Isochrone refresh");
 
-        addTargomoLayer();
+    //     addTargomoLayer();
 
-        dispatch(toggleIsochronesValid(true));
-        locations.forEach((location) => {
-            dispatch(updateLocation({
-                ...location,
-                modifiedFields: { ...location.modifiedFields, coordinates: false }
-            }));
-        });
-    }, [isochroneRefresh]);
+    //     dispatch(toggleIsochronesValid(true));
+    //     locations.forEach((location) => {
+    //         dispatch(updateLocation({
+    //             ...location,
+    //             modifiedFields: { ...location.modifiedFields, coordinates: false }
+    //         }));
+    //     });
+    // }, [isochroneRefresh]);
 
     /* Karte initialisieren */
     useEffect(() => {
@@ -71,14 +71,14 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
         updateMarkers();
     }, [locations]);
 
-    async function addMarker(location: Location) {
-        if (!location.coordinates) return;
+    async function addMarker(locationRecord: LocationRecord) {
+        if (!locationRecord.location.coordinates) return;
 
-        const [lng, lat] = location.coordinates;
+        const [lng, lat] = locationRecord.location.coordinates;
 
         // Neuen Marker mit Custom SVG erstellen
         const customMarker = document.createElement("div");
-        createRoot(customMarker).render(<LocationMarker text={location.number} />);
+        createRoot(customMarker).render(<LocationMarker text={locationRecord.location.number} />);
 
         const newMarker = new mapboxgl.Marker({ element: customMarker, draggable: true })
             .setLngLat([lng, lat])
@@ -88,23 +88,30 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
             const { lng, lat } = newMarker.getLngLat();
             const newAddress = await fetchAddress(lng, lat, mapboxToken);
 
-            const newLocation: Location = {
-                ...location,
-                coordinates: [lng, lat],
-                address: newAddress,
-                modifiedFields: {
-                    ...location.modifiedFields,
-                    coordinates: true,
+            const newLocation: LocationRecord = {
+                ...locationRecord,
+                location: {
+                    ...locationRecord.location,
+                    coordinates: [lng, lat],
+                    address: newAddress,
+                },
+                metaData: {
+                    ...locationRecord.metaData,
+                    needsIsochroneRecalculation: true,
                 },
             };
+
             dispatch(updateLocation(newLocation));
         });
 
-        const newMarkerData = { marker: newMarker, location: location };
+        const newMarkerData = {
+            marker: newMarker,
+            locationRecord: locationRecord
+        };
 
         if (!newMarkerData) return null;
 
-        markerIds.current.add(location.id);
+        markerIds.current.add(locationRecord.location.id);
         markerList.current.push(newMarkerData);
 
         return newMarkerData;
@@ -112,42 +119,42 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
 
     async function removeMarker(markerData: MarkerData) {
         markerData.marker.remove();
-        markerIds.current.delete(markerData.location.id);
-        markerList.current = markerList.current.filter((m) => m.location.id !== markerData.location.id);
+        markerIds.current.delete(markerData.locationRecord.location.id);
+        markerList.current = markerList.current.filter((m) => m.locationRecord.location.id !== markerData.locationRecord.location.id);
     }
 
     async function updateMarkers() {
-        for (const location of locations) {
+        for (const locationRecord of locations) {
 
             // Marker hinzufügen, wenn noch nicht vorhanden
-            if (!markerIds.current.has(location.id)) {
-                if (!location.active) continue; // Marker nur hinzufügen, wenn Location aktiv
+            if (!markerIds.current.has(locationRecord.location.id)) {
+                if (!locationRecord.location.active) continue; // Marker nur hinzufügen, wenn Location aktiv
 
-                await addMarker(location);
+                await addMarker(locationRecord);
                 continue;
             }
 
-            const markerData = markerList.current.find((m) => m.location.id === location.id);
-            if (location == markerData?.location) continue;
-
+            // Suche Marker aus Liste zur aktuellen Location
+            const markerData = markerList.current.find((m) => m.locationRecord.location.id === locationRecord.location.id);
             if (!markerData) continue;
+            if (locationRecord.location == markerData?.locationRecord.location) continue;
 
             // Marker entfernen, wenn Location inaktiv
-            if (location.active == false) {
+            if (locationRecord.location.active == false) {
                 await removeMarker(markerData);
                 continue;
             }
 
-            // Marker aktualisieren, wenn geändert
-            if (markerData.location != location) {
+            // Marker aktualisieren, wenn sich Koordinaten geändert haben geändert
+            if (markerData.locationRecord.location.coordinates != locationRecord.location.coordinates) {
                 await removeMarker(markerData);
-                await addMarker(location);
+                await addMarker(locationRecord);
             }
         }
         for (const markerData of markerList.current) {
 
             // Marker entfernen, wenn Location nicht mehr existiert
-            const locationExists = locations.some((l) => l.id === markerData.location.id);
+            const locationExists = locations.some((locEntry) => locEntry.location.id === markerData.locationRecord.location.id);
             if (!locationExists) {
                 await removeMarker(markerData);
             }
@@ -194,7 +201,7 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
             // minPolygonHoleSize: 30000000,
             useClientCache: true,
             simplify: 2,
-            intersectionMode: 'union' as any, 
+            intersectionMode: 'union' as any,
             roadNetworkWeightRules: {
                 trafficLights: 0,   // Erhöhe Gewichtung, um Unterschied zu sehen
                 stopSigns: 0,       // Erhöhe Gewichtung für Stoppschilder
@@ -202,15 +209,7 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
             },
         };
 
-        console.log("options", options);
-
-        console.log("Targomo API Key:", targomoApiKey);
-        console.log("Targomo Client:", client);
-        console.log("Targomo Options:", options);
-        console.log("Targomo Sources:", sources);
-
         const result = await client.polygons.fetch(sources, options);
-        console.log(result);
 
         return result
     }
@@ -220,9 +219,9 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
         for (const markerData of markerList.current) {
 
 
-            if (markerData.location.active == false) continue;
-            const [lng, lat] = markerData.location.coordinates;
-            const id = markerData.location.id;
+            if (markerData.locationRecord.location.active == false) continue;
+            const [lng, lat] = markerData.locationRecord.location.coordinates;
+            const id = markerData.locationRecord.location.id;
             const data = {
                 id: id,
                 lng: lng,
@@ -237,7 +236,6 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
                 }
             }
             coordinatesList.push(data);
-            console.log(coordinatesList);
             await getTargomoIsochrone(coordinatesList);
         }
 

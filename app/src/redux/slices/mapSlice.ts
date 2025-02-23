@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { Location } from '../../types'
+import { LocationRecord } from '../../types'
 
 interface InitialState {
-    locations: Location[];
+    locations: LocationRecord[];
     isochronesValid: boolean;
 }
 
@@ -15,28 +15,30 @@ export const mapSlice = createSlice({
     name: 'map',
     initialState,
     reducers: {
-        addLocation: (state, action) => {
-            console.log(action)
+        addLocation: (state, action: {payload: LocationRecord, type: string}) => {
             const { payload } = action;
             state.locations.push(payload)
         },
-        updateLocation: (state, action) => {
+        updateLocation: (state, action : {payload : LocationRecord, type: string}) => {
             const { payload } = action;
-            const index = state.locations.findIndex((loc) => loc.id === payload.id);
+            const index = state.locations.findIndex((LocationRecord) => LocationRecord.location.id === payload.location.id);
             if (index !== -1) {
                 state.locations[index] = payload;
+                return;
+            }
+            if (payload.metaData.needsIsochroneRecalculation) {
+                state.isochronesValid = false;
             }
         },
-        deleteLocation: (state, action) => {
+        deleteLocation: (state, action: {payload: string, type: string}) => {
             const { payload } = action;
-            state.locations = state.locations.filter((loc) => loc.id !== payload);
+            state.locations = state.locations.filter((LocationRecord) => LocationRecord.location.id !== payload);
         },
-        setLocations: (state, action) => {
+        setLocations: (state, action: {payload: LocationRecord[], type: string}) => {
             const { payload } = action;
-            console.log(payload)
             state.locations = payload
         },
-        toggleIsochronesValid: (state, action) => {
+        toggleIsochronesValid: (state, action: {payload: boolean, type:string}) => {
             const { payload } = action;
             state.isochronesValid = payload;
         },

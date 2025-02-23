@@ -18,6 +18,7 @@ import DeleteModal from './modals/DeleteModal';
 export default function Header({ onIsochroneRefresh }: { onIsochroneRefresh: () => void }) {
     const dispatch = useDispatch();
     const locations = useSelector((state: RootState) => state.map.locations);
+    const isochronesValid = useSelector((state: RootState) => state.map.isochronesValid);
 
     const [file, setFile] = useState<File | null>(null);
     const [uploadLoading, setUploadLoading] = useState(false);
@@ -88,7 +89,7 @@ export default function Header({ onIsochroneRefresh }: { onIsochroneRefresh: () 
                     variant="filled"
                     rightSection={<FiRefreshCw size={16} />}
                     onClick={onIsochroneRefresh}
-                    // loading={downloadLoading}
+                    disabled={locations.length <= 0 || isochronesValid}
                 >
                     Aktualisieren
                 </Button>

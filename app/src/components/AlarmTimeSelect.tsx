@@ -39,7 +39,6 @@ export default function AlarmTimeSelect() {
     ));
 
     function handleSelect(value: number) {
-        console.log(value);
         setValue(value);
         dispatch(setTimeLimit(value));
     }

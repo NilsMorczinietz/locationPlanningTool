@@ -6,12 +6,18 @@ export interface Location {
     number: string;
     address: string;
     coordinates: [number, number];
-    modifiedFields: {
-        coordinates: boolean;
-    }
+}
+
+export interface LocationMetaData {
+    needsIsochroneRecalculation: boolean;
+}
+
+export interface LocationRecord  {
+    location: Location;
+    metaData: LocationMetaData;
 }
 
 export interface MarkerData {
     marker: mapboxgl.Marker;
-    location: Location;
+    locationRecord: LocationRecord;
 }
