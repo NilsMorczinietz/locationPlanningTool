@@ -14,11 +14,14 @@ import { setLocations } from "../redux/slices/mapSlice";
 import fw_dus_logo from '/fw_dus_logo.png';
 import AlarmTimeSelect from './AlarmTimeSelect';
 import DeleteModal from './modals/DeleteModal';
+import { IsochroneState } from '../screens/Planning';
 
-export default function Header({ onIsochroneRefresh }: { onIsochroneRefresh: () => void }) {
+export default function Header({ setIsochroneRefresh, isochroneRefresh }: { setIsochroneRefresh: (value : IsochroneState) => void, isochroneRefresh : IsochroneState }) {
     const dispatch = useDispatch();
     const locations = useSelector((state: RootState) => state.map.locations);
     const isochronesValid = useSelector((state: RootState) => state.map.isochronesValid);
+
+    console.log(isochroneRefresh);
 
     const [file, setFile] = useState<File | null>(null);
     const [uploadLoading, setUploadLoading] = useState(false);
@@ -88,8 +91,9 @@ export default function Header({ onIsochroneRefresh }: { onIsochroneRefresh: () 
                     color="rgb(15, 15, 15)"
                     variant="filled"
                     rightSection={<FiRefreshCw size={16} />}
-                    onClick={onIsochroneRefresh}
+                    onClick={() => setIsochroneRefresh("loading")}
                     disabled={locations.length <= 0 || isochronesValid}
+                    loading={isochroneRefresh == "loading"}
                 >
                     Aktualisieren
                 </Button>

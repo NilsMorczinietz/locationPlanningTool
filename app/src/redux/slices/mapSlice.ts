@@ -4,11 +4,13 @@ import { LocationRecord } from '../../types'
 interface InitialState {
     locations: LocationRecord[];
     isochronesValid: boolean;
+    isochrones: GeoJSON.FeatureCollection | null;
 }
 
 const initialState: InitialState = {
     locations: [],
     isochronesValid: false,
+    isochrones: null,
 }
 
 export const mapSlice = createSlice({
@@ -42,6 +44,10 @@ export const mapSlice = createSlice({
             const { payload } = action;
             state.isochronesValid = payload;
         },
+        setIsochrones: (state, action: {payload: GeoJSON.FeatureCollection, type: string}) => {
+            const { payload } = action;
+            state.isochrones = payload;
+        },
     },
 })
 
@@ -51,7 +57,8 @@ export const {
     addLocation,
     updateLocation,
     deleteLocation,
-    toggleIsochronesValid
+    toggleIsochronesValid,
+    setIsochrones
 } = mapSlice.actions
 
 export default mapSlice.reducer

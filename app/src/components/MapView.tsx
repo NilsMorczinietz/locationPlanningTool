@@ -11,9 +11,10 @@ import "./MapView.css";
 import ViewControls from "./ViewControls";
 import StyleControls from "./StyleControls";
 import { MarkerData, Location, LocationRecord } from "../types";
-import { toggleIsochronesValid, updateLocation } from "../redux/slices/mapSlice";
+import { setIsochrones, toggleIsochronesValid, updateLocation } from "../redux/slices/mapSlice";
 import tgm from "@targomo/core";
 import { TargomoClient, TravelType } from "@targomo/core";
+import { IsochroneState } from "../screens/Planning";
 
 const targomoApiKey = import.meta.env.VITE_APP_TARGOMO_API_KEY;
 
@@ -22,7 +23,7 @@ if (!mapboxToken) {
     throw new Error("Mapbox Access Token fehlt. Setze ihn in der .env Datei.");
 }
 
-export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolean }) {
+export default function MapView({ isochroneRefresh, setIsochroneRefresh}: { isochroneRefresh: IsochroneState, setIsochroneRefresh: (value : IsochroneState) => void}) {
     const dispatch = useDispatch();
 
     const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -33,19 +34,30 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
     const markerIds = useRef(new Set<string>());
     const markerList = useRef<MarkerData[]>([]);
 
-    // useEffect(() => {
-    //     console.log("Isochrone refresh");
+    const isFirstRender = useRef(true);
+    useEffect(() => {
+        const fetchData = async () => {
+            if (isFirstRender.current) {
+                isFirstRender.current = false;
+                return;
+            }
+            if( isochroneRefresh === "neutral") return;
 
-    //     addTargomoLayer();
+            await addTargomoLayer();
 
-    //     dispatch(toggleIsochronesValid(true));
-    //     locations.forEach((location) => {
-    //         dispatch(updateLocation({
-    //             ...location,
-    //             modifiedFields: { ...location.modifiedFields, coordinates: false }
-    //         }));
-    //     });
-    // }, [isochroneRefresh]);
+            dispatch(toggleIsochronesValid(true));
+            locations.forEach((location) => {
+                dispatch(updateLocation({
+                    ...location,
+                    metaData: { ...location.metaData, needsIsochroneRecalculation: false }
+                }));
+            });
+            setIsochroneRefresh("neutral");
+        };
+
+        fetchData();
+    }, [isochroneRefresh]);
+
 
     /* Karte initialisieren */
     useEffect(() => {
@@ -55,6 +67,8 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
         mapRef.current = map;
 
         map.on("load", () => addBordersLayer(map));
+
+        dispatch(toggleIsochronesValid(false));
 
         return () => map.remove();
     }, []);
@@ -195,18 +209,11 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
             travelType: 'car' as TravelType,
             travelEdgeWeights: [60 * 8],
             srid: 4326,
-            buffer: 0.0003, // 400 Meter
+            buffer: 0.0003, // 300 Meter
             serializer: "geojson" as "geojson",
-            // maxEdgeWeight: 1800,
-            // minPolygonHoleSize: 30000000,
             useClientCache: true,
             simplify: 2,
-            intersectionMode: 'union' as any,
-            roadNetworkWeightRules: {
-                trafficLights: 0,   // Erhöhe Gewichtung, um Unterschied zu sehen
-                stopSigns: 0,       // Erhöhe Gewichtung für Stoppschilder
-                turnRestrictions: 0, // Erhöhe Gewichtung für Abbiegeregeln
-            },
+            intersectionMode: 'union' as any
         };
 
         const result = await client.polygons.fetch(sources, options);
@@ -229,20 +236,20 @@ export default function MapView({ isochroneRefresh }: { isochroneRefresh: boolea
                 "tm": {
                     "car": {
                         rushHour: false,
-                        trafficSignalPenalty: 0,
-                        trafficLeftTurnPenalty: 0,
-                        trafficRightTurnPenalty: 0,
+                        trafficSignalPenalty: 1,
+                        trafficLeftTurnPenalty: 2,
+                        trafficRightTurnPenalty: 1,
                     }
                 }
             }
             coordinatesList.push(data);
-            await getTargomoIsochrone(coordinatesList);
         }
 
         const map = mapRef.current;
         if (!map || coordinatesList.length === 0) return;
 
         const data = await getTargomoIsochrone(coordinatesList);
+        dispatch(setIsochrones(data));
         if (!data) return;
 
         const sourceId = "targomo-isochrone-layer";
