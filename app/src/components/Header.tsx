@@ -21,8 +21,6 @@ export default function Header({ setIsochroneRefresh, isochroneRefresh }: { setI
     const locations = useSelector((state: RootState) => state.map.locations);
     const isochronesValid = useSelector((state: RootState) => state.map.isochronesValid);
 
-    console.log(isochroneRefresh);
-
     const [file, setFile] = useState<File | null>(null);
     const [uploadLoading, setUploadLoading] = useState(false);
     const [downloadLoading, setDownloadLoading] = useState(false);
@@ -95,7 +93,7 @@ export default function Header({ setIsochroneRefresh, isochroneRefresh }: { setI
                     disabled={locations.length <= 0 || isochronesValid}
                     loading={isochroneRefresh == "loading"}
                 >
-                    Aktualisieren
+                    {isochroneRefresh == "initial" ? <>Berechnen</> : <>Aktualisieren</>}
                 </Button>
 
                 <DeleteModal/>

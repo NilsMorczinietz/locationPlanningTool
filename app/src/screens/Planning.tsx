@@ -6,10 +6,10 @@ import Sidebar from "../components/Sidebar"
 
 import "./Planning.css"
 
-export type IsochroneState = "loading" | "neutral";
+export type IsochroneState = "loading" | "neutral" | "initial"
 
 function Planning() {
-    const [isochroneRefresh, setIsochroneRefresh] = useState<IsochroneState>("neutral");
+    const [isochroneRefresh, setIsochroneRefresh] = useState<IsochroneState>("initial");
 
     const handleIsochroneRefresh = (value : IsochroneState) => {
         setIsochroneRefresh(value);

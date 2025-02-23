@@ -10,9 +10,8 @@ import LocationMarker from "./LocationMarker";
 import "./MapView.css";
 import ViewControls from "./ViewControls";
 import StyleControls from "./StyleControls";
-import { MarkerData, Location, LocationRecord } from "../types";
+import { MarkerData, LocationRecord } from "../types";
 import { setIsochrones, toggleIsochronesValid, updateLocation } from "../redux/slices/mapSlice";
-import tgm from "@targomo/core";
 import { TargomoClient, TravelType } from "@targomo/core";
 import { IsochroneState } from "../screens/Planning";
 
