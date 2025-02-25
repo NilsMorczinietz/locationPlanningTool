@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Button, FileButton, Text } from '@mantine/core';
+import { TextInput } from '@mantine/core';
 
 import { FiDownload } from "react-icons/fi";
 import { FiUpload } from "react-icons/fi";
@@ -16,7 +17,9 @@ import AlarmTimeSelect from './AlarmTimeSelect';
 import DeleteModal from './modals/DeleteModal';
 import { IsochroneState } from '../screens/Planning';
 
-export default function Header({ setIsochroneRefresh, isochroneRefresh }: { setIsochroneRefresh: (value : IsochroneState) => void, isochroneRefresh : IsochroneState }) {
+import classes from './header.module.css';
+
+export default function Header({ setIsochroneRefresh, isochroneRefresh }: { setIsochroneRefresh: (value: IsochroneState) => void, isochroneRefresh: IsochroneState }) {
     const dispatch = useDispatch();
     const locations = useSelector((state: RootState) => state.map.locations);
     const isochronesValid = useSelector((state: RootState) => state.map.isochronesValid);
@@ -24,6 +27,8 @@ export default function Header({ setIsochroneRefresh, isochroneRefresh }: { setI
     const [file, setFile] = useState<File | null>(null);
     const [uploadLoading, setUploadLoading] = useState(false);
     const [downloadLoading, setDownloadLoading] = useState(false);
+
+    const [scenarioTitle, setScenarioTitle] = useState("Szenario 1");
 
     function download() {
         setDownloadLoading(true);
@@ -73,10 +78,34 @@ export default function Header({ setIsochroneRefresh, isochroneRefresh }: { setI
                     />
                 </div>
 
+                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", height:"100%"}}>
+                    <Text
+                        c="white"
+                        size="md"
+                        fw={500}
+                    >
+                        Szenario:
+                    </Text>
+                    <TextInput
+                        // error={error.title}
+                        radius="xs"
+                        placeholder='Szenario'
+                        variant="unstyled"
+                        value={scenarioTitle}
+                        onChange={(e) => setScenarioTitle(e.target.value)}
+                        style={{ width: (scenarioTitle.length * 8 + 10) + "px" }}
+                        classNames={{ input: classes.input, root: classes.root }}
+                    />
+                    <div />
+                </div>
+
+                <div style={{ display: "flex", height: "70%", width: "1px", backgroundColor: "white", marginLeft: "5px", marginRight: "5px" }}></div>
+
                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0px" }}>
                     <Text
                         c="white"
                         size="md"
+                        fw={500}
                     >
                         Einsatzzeit:
                     </Text>
@@ -96,7 +125,7 @@ export default function Header({ setIsochroneRefresh, isochroneRefresh }: { setI
                     {isochroneRefresh == "initial" ? <>Berechnen</> : <>Aktualisieren</>}
                 </Button>
 
-                <DeleteModal/>
+                <DeleteModal />
 
                 <FileButton
                     key={file ? file.name : "file-upload"}

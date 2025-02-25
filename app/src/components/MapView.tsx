@@ -296,6 +296,7 @@ export default function MapView({ isochroneRefresh, setIsochroneRefresh }: { iso
                         trafficSignalPenalty: 1,
                         trafficLeftTurnPenalty: 2,
                         trafficRightTurnPenalty: 1,
+                        time: 10800,
                     }
                 }
             }

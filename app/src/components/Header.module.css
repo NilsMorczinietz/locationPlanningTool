@@ -1,0 +1,17 @@
+.input {
+    display: flex;
+    text-align: left;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    height: 100%;
+    margin-bottom: 2px;
+    padding: 5px;
+    width: auto; /* Passt sich dem Inhalt an */
+
+}
+
+.root {
+    display: flex;
+    min-width: 70px; /* Verhindert zu kleine Eingaben */
+}
