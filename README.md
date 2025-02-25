@@ -1,6 +1,7 @@
 # Feuerwehr Standortplanungstool
 
 Dieses Tool ermöglicht die digitale Planung und Optimierung von Feuerwehrstandorten. Es bietet eine interaktive Karte zur Visualisierung von Standorten, eine Sidebar zur Verwaltung und Bearbeitung sowie eine intuitive Benutzeroberfläche zur schnellen Anpassung und Optimierung der Standortverteilung.
+Dabei sind Verzögerungen im Verkehr, etwa durch Ampeln oder das Linksabbiegen, an die Fahrweise der Feuerwehr angepasst, um realistische Anfahrtszeiten zu berechnen.
 
 ## Funktionen
 - **Kartenintegration mit Mapbox**: Standorte werden auf einer interaktiven Karte dargestellt.
