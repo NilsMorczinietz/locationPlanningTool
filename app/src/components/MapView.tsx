@@ -22,13 +22,14 @@ if (!mapboxToken) {
     throw new Error("Mapbox Access Token fehlt. Setze ihn in der .env Datei.");
 }
 
-export default function MapView({ isochroneRefresh, setIsochroneRefresh}: { isochroneRefresh: IsochroneState, setIsochroneRefresh: (value : IsochroneState) => void}) {
+export default function MapView({ isochroneRefresh, setIsochroneRefresh }: { isochroneRefresh: IsochroneState, setIsochroneRefresh: (value: IsochroneState) => void }) {
     const dispatch = useDispatch();
 
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const locations: LocationRecord[] = useSelector((state: RootState) => state.map.locations);
     const settings = useSelector((state: RootState) => state.settings);
+    const isochrones = useSelector((state: RootState) => state.map.isochrones);
 
     const markerIds = useRef(new Set<string>());
     const markerList = useRef<MarkerData[]>([]);
@@ -40,7 +41,7 @@ export default function MapView({ isochroneRefresh, setIsochroneRefresh}: { isoc
                 isFirstRender.current = false;
                 return;
             }
-            if( isochroneRefresh === "neutral") return;
+            if (isochroneRefresh === "neutral") return;
 
             await addTargomoLayer();
 
@@ -91,7 +92,7 @@ export default function MapView({ isochroneRefresh, setIsochroneRefresh}: { isoc
 
         // Neuen Marker mit Custom SVG erstellen
         const customMarker = document.createElement("div");
-        createRoot(customMarker).render(<LocationMarker text={locationRecord.location.number} strokeColor="black"/>);
+        createRoot(customMarker).render(<LocationMarker text={locationRecord.location.number} strokeColor="black" />);
 
         const newMarker = new mapboxgl.Marker({ element: customMarker, draggable: true })
             .setLngLat([lng, lat])
@@ -211,7 +212,7 @@ export default function MapView({ isochroneRefresh, setIsochroneRefresh}: { isoc
 
         const options = {
             travelType: 'car' as TravelType,
-            travelEdgeWeights: [ settings.timeLimit * 60 ], // Zeitlimit in Sekunden
+            travelEdgeWeights: [settings.timeLimit * 60], // Zeitlimit in Sekunden
             srid: 4326,
             buffer: 0.0003, // 300 Meter
             serializer: "geojson" as "geojson",
@@ -224,6 +225,58 @@ export default function MapView({ isochroneRefresh, setIsochroneRefresh}: { isoc
 
         return result
     }
+
+    useEffect(() => {
+        if (!mapRef.current || isochrones === null) return;
+
+        const map = mapRef.current;
+        const sourceId = "targomo-isochrone-layer";
+        const layerId = "targomo-layer";
+
+        if (map.isStyleLoaded()) {
+            if (map.getLayer(layerId)) map.removeLayer(layerId);
+            if (map.getSource(sourceId)) map.removeSource(sourceId);
+
+            map.addSource(sourceId, {
+                type: "geojson",
+                data: isochrones,
+            });
+
+            map.addLayer({
+                id: layerId,
+                type: "fill",
+                source: sourceId,
+                layout: {},
+                paint: {
+                    "fill-color": "#008000",
+                    "fill-opacity": 0.2,
+                },
+            });
+        } else {
+            map.once("style.load", () => {
+                if (map.getLayer(layerId)) map.removeLayer(layerId);
+                if (map.getSource(sourceId)) map.removeSource(sourceId);
+
+                map.addSource(sourceId, {
+                    type: "geojson",
+                    data: isochrones,
+                });
+
+                map.addLayer({
+                    id: layerId,
+                    type: "fill",
+                    source: sourceId,
+                    layout: {},
+                    paint: {
+                        "fill-color": "#008000",
+                        "fill-opacity": 0.2,
+                    },
+                });
+            });
+        }
+    }, [isochrones]);
+
+
 
     async function addTargomoLayer() {
         const coordinatesList = [];
