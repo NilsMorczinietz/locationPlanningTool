@@ -7,6 +7,7 @@ import { setTimeLimit } from '../redux/slices/settingsSlice';
 
 import classes from './alarmTimeSelect.module.css';
 import { RootState } from '../redux/store';
+import { toggleIsochronesValid } from '../redux/slices/mapSlice';
 
 interface Item {
     label: string;
@@ -41,6 +42,7 @@ export default function AlarmTimeSelect() {
     function handleSelect(value: number) {
         setValue(value);
         dispatch(setTimeLimit(value));
+        dispatch(toggleIsochronesValid(false));
     }
 
     return (

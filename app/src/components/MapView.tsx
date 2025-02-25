@@ -211,7 +211,7 @@ export default function MapView({ isochroneRefresh, setIsochroneRefresh}: { isoc
 
         const options = {
             travelType: 'car' as TravelType,
-            travelEdgeWeights: [60 * 8],
+            travelEdgeWeights: [ settings.timeLimit * 60 ], // Zeitlimit in Sekunden
             srid: 4326,
             buffer: 0.0003, // 300 Meter
             serializer: "geojson" as "geojson",
