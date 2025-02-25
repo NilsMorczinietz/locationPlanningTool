@@ -91,7 +91,7 @@ export default function MapView({ isochroneRefresh, setIsochroneRefresh}: { isoc
 
         // Neuen Marker mit Custom SVG erstellen
         const customMarker = document.createElement("div");
-        createRoot(customMarker).render(<LocationMarker text={locationRecord.location.number} />);
+        createRoot(customMarker).render(<LocationMarker text={locationRecord.location.number} strokeColor="black"/>);
 
         const newMarker = new mapboxgl.Marker({ element: customMarker, draggable: true })
             .setLngLat([lng, lat])
