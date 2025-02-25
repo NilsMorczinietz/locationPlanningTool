@@ -272,7 +272,6 @@ export default function MapView({ isochroneRefresh, setIsochroneRefresh}: { isoc
                 "fill-opacity": 0.2,
             },
         });
-
     }
 
     return (

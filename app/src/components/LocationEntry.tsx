@@ -117,11 +117,11 @@ export default function LocationEntry({ locationRecord }: { locationRecord: Loca
         address: '',
     });
 
-    const [editLocation, setEditLocation] = useState<LocationRecord>(locationRecord);
+    const [editLocation, setEditLocation] = useState<LocationRecord>({ ...locationRecord });
     useEffect(() => {
         setEditLocation(locationRecord);
     }, [locationRecord]);
-    
+
 
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -159,24 +159,22 @@ export default function LocationEntry({ locationRecord }: { locationRecord: Loca
         resetError();
         if (!verifyLocation()) return;
 
+        let updatedLocation: LocationRecord = { ...editLocation };
+
         if (editLocation.location.address != locationRecord.location.address) {
             const coordinates = await fetchCoordinates(editLocation.location.address, mapboxToken);
             if (!coordinates) {
                 setError((prev: any) => ({ ...prev, address: 'Adresse konnte nicht gefunden werden' }));
                 return;
             }
-
-            editLocation.location.coordinates = coordinates;
+            updatedLocation = { ...editLocation, location: { ...editLocation.location, coordinates: coordinates } };
         }
         if (editLocation.location.coordinates != locationRecord.location.coordinates) {
-            editLocation.metaData.needsIsochroneRecalculation = true;
+            updatedLocation = { ...editLocation, metaData: { ...editLocation.metaData, needsIsochroneRecalculation: true } };
             dispatch(toggleIsochronesValid(false));
         }
-        // if (editLocation.identifier != location.identifier) {
-        //     editLocation.modifiedFields.identifier = true;
-        // }
 
-        dispatch(updateLocation({ ...editLocation }));
+        dispatch(updateLocation(updatedLocation));
 
         setIsEditing(false);
     }
@@ -192,12 +190,12 @@ export default function LocationEntry({ locationRecord }: { locationRecord: Loca
     }
 
     function handleToggleActive() {
-        dispatch(updateLocation({ 
-            ...locationRecord, 
-            location: { 
-                ...locationRecord.location, 
-                active: !locationRecord.location.active 
-            } 
+        dispatch(updateLocation({
+            ...locationRecord,
+            location: {
+                ...locationRecord.location,
+                active: !locationRecord.location.active
+            }
         }));
     }
 
