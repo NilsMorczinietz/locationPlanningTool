@@ -164,6 +164,10 @@ export default function MapView({ isochroneRefresh, setIsochroneRefresh}: { isoc
                 await removeMarker(markerData);
                 await addMarker(locationRecord);
             }
+            else if (markerData.locationRecord.location.number != locationRecord.location.number) {
+                await removeMarker(markerData);
+                await addMarker(locationRecord);
+            }
         }
         for (const markerData of markerList.current) {
 
