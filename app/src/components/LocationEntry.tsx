@@ -161,16 +161,16 @@ export default function LocationEntry({ locationRecord }: { locationRecord: Loca
 
         let updatedLocation: LocationRecord = { ...editLocation };
 
-        if (editLocation.location.address != locationRecord.location.address) {
-            const coordinates = await fetchCoordinates(editLocation.location.address, mapboxToken);
+        if (updatedLocation.location.address != locationRecord.location.address) {
+            const coordinates = await fetchCoordinates(updatedLocation.location.address, mapboxToken);
             if (!coordinates) {
                 setError((prev: any) => ({ ...prev, address: 'Adresse konnte nicht gefunden werden' }));
                 return;
             }
-            updatedLocation = { ...editLocation, location: { ...editLocation.location, coordinates: coordinates } };
+            updatedLocation = { ...updatedLocation, location: { ...updatedLocation.location, coordinates: coordinates } };
         }
-        if (editLocation.location.coordinates != locationRecord.location.coordinates) {
-            updatedLocation = { ...editLocation, metaData: { ...editLocation.metaData, needsIsochroneRecalculation: true } };
+        if (updatedLocation.location.coordinates != locationRecord.location.coordinates) {
+            updatedLocation = { ...updatedLocation, metaData: { ...updatedLocation.metaData, needsIsochroneRecalculation: true } };
             dispatch(toggleIsochronesValid(false));
         }
 
