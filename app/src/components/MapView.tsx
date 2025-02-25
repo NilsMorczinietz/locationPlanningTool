@@ -115,6 +115,7 @@ export default function MapView({ isochroneRefresh, setIsochroneRefresh}: { isoc
             };
 
             dispatch(updateLocation(newLocation));
+            dispatch(toggleIsochronesValid(false));
         });
 
         const newMarkerData = {
