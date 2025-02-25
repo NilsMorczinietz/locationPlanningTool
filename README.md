@@ -19,10 +19,20 @@ Dieses Tool hilft dabei, Feuerwehrstandorte effizient zu verwalten und die Einsa
 
 ## Preview
 
+Standorte verteilen – Platziere Feuerwehrstandorte auf der Karte, entweder durch Drag & Drop oder durch direkte Adresseingabe in der Sidebar. So können neue Standorte flexibel hinzugefügt oder bestehende angepasst werden.
 ![IMAGE](./images/image.png)
+
+Erreichbarkeiten berechnen – Erhalte eine visuelle Darstellung der Gebiete, die von den ausgewählten Feuerwehrstandorten innerhalb einer bestimmten Zeitspanne erreicht werden können. Dies hilft bei der Einschätzung der Abdeckung.
 ![IMAGE2](./images/image2.png)
+
+Standorte dynamisch anpassen – Verschiebe Standorte per Drag & Drop oder ändere die Adressen in der Sidebar. Hier wurden beispielhaft FRW 1 und FRW 3 verändert, was sich auf die Erreichbarkeiten auswirkt.
 ![IMAGE3](./images/image3.png)
+
+Erreichbarkeiten aktualisieren – Nach Anpassungen der Standorte lassen sich die neuen Erreichbarkeiten berechnen, um die Auswirkungen auf die Einsatzplanung direkt zu sehen.
 ![IMAGE4](./images/image4.png)
+
+Unterschiedliche Einsatzzeiten simulieren – Wähle verschiedene Zeitvorgaben für die Anfahrt aus und berechne die Erreichbarkeiten für unterschiedliche Einsatzszenarien, um die optimale Standortverteilung zu ermitteln.
+![IMAGE5](./images/image5.png)
 
 <sub>  
 (Dieses Projekt wurde inspiriert durch das Standortplanungstool von  
